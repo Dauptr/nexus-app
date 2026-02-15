@@ -1,7 +1,30 @@
 {
   "name": "z-ai-code-scaffold",
   "version": "0.3.0",
-  "private": true,
+  "description": "Modern Next.js scaffold optimized for AI-powered development. Built with TypeScript, Tailwind CSS 4, Prisma, and 35+ shadcn/ui components.",
+  "keywords": [
+    "next.js",
+    "typescript",
+    "tailwindcss",
+    "shadcn",
+    "prisma",
+    "scaffold",
+    "starter",
+    "boilerplate",
+    "ai",
+    "z.ai"
+  ],
+  "author": "Z.ai Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/z-ai/code-scaffold"
+  },
+  "bugs": {
+    "url": "https://github.com/z-ai/code-scaffold/issues"
+  },
+  "homepage": "https://github.com/z-ai/code-scaffold#readme",
+  "type": "module",
   "scripts": {
     "dev": "next dev -p 3000 2>&1 | tee dev.log",
     "build": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
@@ -11,6 +34,21 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset"
+  },
+  "files": [
+    "src",
+    "prisma",
+    "public",
+    "db",
+    "next.config.ts",
+    "tailwind.config.ts",
+    "tsconfig.json",
+    "postcss.config.mjs",
+    "components.json",
+    ".env"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

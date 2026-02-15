@@ -1,13 +1,71 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Git
+.git
+.gitignore
+
+# Docker
 Dockerfile
 .dockerignore
-node_modules
-npm-debug.log
+
+# Documentation
 README.md
-.next
-.git
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-test
+CHANGELOG.md
+LICENSE
+
+# Test files
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+__tests__
+
+# Development files
+examples
+skills
+download
 *.log
-local-*
+dev.log
+server.log
+
+# Database journal files
+db/*.db-journal
