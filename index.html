@@ -3,883 +3,679 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS OS v9.0 - Sentient Operating System</title>
+    <title>NEXUS OS // QUANTUM INTERFACE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <script src="https://js.puter.com/v2/"></script>
     <style>
-        :root {
-            --bg: #000001;
-            --fg: #e5e7eb;
-            --muted: #6b7280;
-            --accent: #00f0ff;
-            --accent2: #ff00aa;
-            --success: #00ff88;
-            --warning: #fbbf24;
-            --card: rgba(0, 20, 30, 0.8);
-            --border: rgba(0, 240, 255, 0.2);
+        :root { 
+            --bg: #020204; --bg-secondary: #08080c; --fg: #e4e4e7; --muted: #52525b; 
+            --accent: #00f0ff; --accent2: #ff00aa; --success: #00ff88; --border: rgba(0, 240, 255, 0.1); 
         }
-        
-        * { box-sizing: border-box; }
-        
-        body {
-            font-family: 'JetBrains Mono', monospace;
-            background: var(--bg);
-            color: var(--fg);
-            margin: 0;
-            overflow-x: hidden;
-        }
-        
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--fg); overflow: hidden; height: 100vh; }
         .font-display { font-family: 'Orbitron', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
         
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0, 10, 20, 0.5); }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00f0ff, #ff00aa); border-radius: 3px; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(0,240,255,0.3); border-radius: 3px; }
+
+        /* High-end Animations */
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.2); } 50% { box-shadow: 0 0 40px rgba(0, 240, 255, 0.4); } }
+        @keyframes scan-line { 0% { top: -10%; } 100% { top: 110%; } }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slide-right { from { transform: translateX(-100%); } to { transform: translateX(0); } }
         
-        @keyframes scan-line {
-            0% { transform: translateY(-100vh); }
-            100% { transform: translateY(100vh); }
+        .glass { background: rgba(10, 10, 20, 0.6); backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--border); }
+        .glass-heavy { background: rgba(5, 5, 10, 0.9); backdrop-filter: blur(25px) saturate(200%); border: 1px solid rgba(0, 240, 255, 0.05); }
+        
+        .gradient-border { 
+            position: relative; background: rgba(0,0,0,0.4); 
+            border: 1px solid transparent; 
+            background-clip: padding-box;
         }
-        
-        @keyframes glitch {
-            0%, 100% { text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff; transform: translate(0); }
-            25% { text-shadow: -3px 0 #ff00aa, 3px 0 #00f0ff; transform: translate(-2px, 1px); }
-            50% { text-shadow: 3px 0 #ff00aa, -3px 0 #00f0ff; transform: translate(2px, -1px); }
-        }
-        
-        @keyframes slide-in {
-            0% { transform: translateX(100%); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slide-down {
-            0% { transform: translateY(-100%); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(0, 240, 255, 0.6); }
+        .gradient-border::before { 
+            content: ''; position: absolute; inset: 0; z-index: -1; 
+            margin: -1px; border-radius: inherit; 
+            background: linear-gradient(135deg, var(--accent), var(--accent2)); 
         }
         
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .btn-primary { 
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 100, 120, 0.2)); 
+            color: var(--accent); font-weight: 600; transition: all 0.3s; 
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+        }
+        .btn-primary:hover { 
+            background: var(--accent); color: #000; 
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); transform: translateY(-1px); 
         }
         
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+        /* Overlay Scan Effect */
+        .scan-overlay::before {
+            content: ''; position: absolute; left: 0; width: 100%; height: 10%;
+            background: linear-gradient(transparent, rgba(0, 240, 255, 0.05), transparent);
+            animation: scan-line 4s linear infinite; pointer-events: none; z-index: 100;
         }
+
+        .trailer-text { animation: fade-in 1.2s ease-out forwards; opacity: 0; }
         
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        .glitch-effect { animation: glitch 0.15s ease-in-out; }
-        .animate-slide-in { animation: slide-in 0.3s ease-out; }
-        .animate-slide-down { animation: slide-down 0.5s ease-out; }
-        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animate-shimmer { animation: shimmer 1.5s infinite; }
-        .animate-gradient { animation: gradient-shift 3s ease infinite; background-size: 200% 200%; }
-        
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            background: transparent;
-            cursor: pointer;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #00f0ff;
-            cursor: pointer;
-            box-shadow: 0 0 10px #00f0ff;
-        }
-        input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #00f0ff;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 0 10px #00f0ff;
-        }
-        
-        .toggle-switch {
-            width: 48px;
-            height: 24px;
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: all 0.3s;
-        }
-        .toggle-switch.active::after {
-            transform: translateX(24px);
-        }
-        
-        .section { display: none; }
-        .section.active { display: block; }
-        
-        button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
-            outline: 2px solid #00f0ff;
-            outline-offset: 2px;
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
+        input[type=range] { -webkit-appearance: none; background: transparent; width: 100%; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 10px; width: 10px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -3px; box-shadow: 0 0 10px var(--accent); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
     </style>
 </head>
-<body>
+<body class="bg-black text-gray-100 overflow-hidden">
+
     <!-- Boot Screen -->
-    <div id="bootScreen" class="fixed inset-0 flex flex-col items-center justify-center z-[9999]" style="background: #000001;">
-        <canvas id="bootCanvas" class="fixed inset-0 z-0 pointer-events-none" style="background: #000001;"></canvas>
-        
-        <div class="fixed inset-0 pointer-events-none z-10 opacity-10" style="background-image: linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px); background-size: 50px 50px;"></div>
-        
-        <div class="fixed inset-0 pointer-events-none overflow-hidden z-20">
-            <div class="absolute w-full h-[2px] opacity-20" style="background: linear-gradient(to bottom, transparent, #00f0ff, transparent); animation: scan-line 6s linear infinite;"></div>
-        </div>
-        
-        <div class="relative mb-12 z-30" id="bootLogo">
-            <h1 id="nexusTitle" class="font-display text-6xl md:text-8xl font-bold tracking-wider" style="color: #00f0ff; text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 40px #00f0ff, 0 0 80px #00f0ff;">
-                NEXUS
-            </h1>
-            <div class="text-center mt-2">
-                <span class="text-sm tracking-[0.3em] animate-pulse" style="color: #ff00aa;">OPERATING SYSTEM v9.0</span>
+    <div id="bootScreen" class="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
+        <canvas id="bootCanvas" class="absolute inset-0 z-0 opacity-30"></canvas>
+        <div class="relative z-10 text-center w-full max-w-sm px-4">
+            <div class="relative inline-block mb-8">
+                <h1 class="font-display text-6xl tracking-widest text-cyan-400 relative z-10" style="text-shadow: 0 0 30px rgba(0,240,255,0.6);">NEXUS</h1>
+                <div class="absolute inset-0 bg-cyan-500/10 blur-3xl rounded-full scale-150"></div>
             </div>
-            <div class="absolute -inset-10 border rounded-lg pointer-events-none animate-pulse" style="border-color: rgba(0, 240, 255, 0.3);"></div>
-        </div>
-        
-        <div class="w-80 md:w-96 space-y-4 z-30">
-            <div id="bootTerminal" class="h-36 overflow-hidden rounded-lg p-3 text-xs" style="background: rgba(0, 10, 20, 0.9); border: 1px solid rgba(0, 240, 255, 0.3); box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);"></div>
             
-            <div class="space-y-2">
-                <div class="h-2 rounded-full overflow-hidden" style="background: rgba(0, 240, 255, 0.1);">
-                    <div id="bootProgress" class="h-full rounded-full transition-all duration-200 relative overflow-hidden" style="width: 0%; background: linear-gradient(90deg, #00f0ff, #ff00aa); box-shadow: 0 0 15px #00f0ff;">
-                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
-                    </div>
+            <div class="glass rounded-xl p-6 shadow-2xl shadow-cyan-500/10">
+                <div class="text-[10px] tracking-[0.4em] text-pink-400 opacity-80 mb-6 uppercase font-bold">System Initializing</div>
+                
+                <div class="h-16 overflow-hidden text-xs font-mono text-gray-400 mb-4 flex flex-col-reverse" id="bootLog"></div>
+                
+                <div class="h-0.5 bg-gray-900 rounded-full overflow-hidden mb-4">
+                    <div id="bootProgress" class="h-full bg-gradient-to-r from-cyan-500 to-pink-500 w-0% transition-all duration-100 shadow-lg shadow-cyan-500/50"></div>
                 </div>
-                <div class="text-center text-xs" style="color: #6b7280;"><span id="bootPercent">0</span>% Complete</div>
+                <div class="text-right text-xs font-mono text-gray-600"><span id="bootPercent">0</span>%</div>
             </div>
-            
-            <button id="skipBtn" class="w-full py-2 px-4 rounded font-mono text-xs transition-transform hover:scale-105 hidden" style="border: 1px solid rgba(0, 240, 255, 0.5); color: #00f0ff; background: rgba(0, 240, 255, 0.1);">
-                [ SKIP INTRO ]
-            </button>
+            <button id="skipBoot" class="hidden text-xs font-mono text-gray-600 hover:text-cyan-400 transition-colors mt-4">[ OVERRIDE ]</button>
         </div>
     </div>
-    
-    <!-- Main Dashboard -->
-    <div id="mainApp" class="hidden min-h-screen" style="background: #000001;">
-        <canvas id="bgCanvas" class="fixed inset-0 z-0 pointer-events-none" style="background: #000001;"></canvas>
-        
-        <div id="notification" class="fixed top-4 right-4 z-[200] px-6 py-3 rounded-lg text-sm hidden animate-slide-in" style="background: rgba(0, 255, 136, 0.2); border: 1px solid rgba(0, 255, 136, 0.5); color: #00ff88; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);"></div>
-        
-        <div id="initOverlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center hidden" style="background: rgba(0, 0, 1, 0.95); backdrop-filter: blur(20px);">
-            <div class="relative mb-8">
-                <div class="absolute inset-0 rounded-full animate-ping" style="width: 200px; height: 200px; left: -20px; top: -20px; background: radial-gradient(circle, rgba(0, 240, 255, 0.2) 0%, transparent 70%);"></div>
-                <div class="flex items-center justify-center rounded-full border-2 relative" style="width: 160px; height: 160px; border-color: rgba(0, 240, 255, 0.5); box-shadow: 0 0 40px rgba(0, 240, 255, 0.3);">
-                    <div class="text-5xl animate-pulse">🧬</div>
-                </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden h-screen flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="h-12 glass border-b border-white/5 flex items-center justify-between px-4 md:px-6 z-50 flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <h1 class="font-display text-base font-bold tracking-wider text-cyan-400 cursor-pointer hover:opacity-80 transition" onclick="navigate('Dashboard')">NEXUS</h1>
+                <span class="hidden md:flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full bg-green-500/10 text-green-300 border border-green-500/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> SECURE
+                </span>
             </div>
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold mb-2 font-display" style="color: #00f0ff; text-shadow: 0 0 10px #00f0ff;">INITIALIZING SYSTEM</h2>
-                <p id="initStage" class="text-lg animate-pulse" style="color: #ff00aa;">Scanning Neural Architecture...</p>
-            </div>
-            <div class="w-80 md:w-96 space-y-2">
-                <div class="h-3 rounded-full overflow-hidden" style="background: rgba(0, 240, 255, 0.1);">
-                    <div id="initProgress" class="h-full rounded-full transition-all duration-150" style="width: 0%; background: linear-gradient(90deg, #00f0ff, #ff00aa, #00ff88);"></div>
-                </div>
-                <div class="text-center text-sm" style="color: #6b7280;"><span id="initPercent">0</span>% Complete</div>
-            </div>
-        </div>
-        
-        <div id="systemBanner" class="fixed top-0 left-0 right-0 z-50 py-2 text-center hidden animate-slide-down pointer-events-none" style="background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.15), transparent); border-bottom: 1px solid rgba(0, 255, 136, 0.3);">
-            <span class="text-sm" style="color: #00ff88; text-shadow: 0 0 10px #00ff88;">✓ SYSTEM INITIALIZED - ALL SUBSYSTEMS OPERATIONAL</span>
-        </div>
-        
-        <div class="fixed inset-0 pointer-events-none z-10 opacity-5" style="background-image: linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px); background-size: 50px 50px;"></div>
-        
-        <header id="mainHeader" class="fixed top-0 left-0 right-0 z-40 border-b backdrop-blur-md transition-all duration-300" style="border-color: rgba(0, 240, 255, 0.2); background: rgba(0, 0, 1, 0.8);">
-            <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <span class="text-2xl font-bold tracking-wider cursor-pointer hover:scale-105 transition-transform font-display" style="color: #00f0ff; text-shadow: 0 0 10px #00f0ff;">NEXUS</span>
-                    <span class="px-2 py-0.5 rounded text-xs" style="background: rgba(0, 240, 255, 0.1); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.3);">v9.0</span>
-                    <span id="activeBadge" class="px-2 py-0.5 rounded text-xs hidden animate-pulse" style="background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.5);">ACTIVE</span>
-                </div>
-                
-                <nav class="hidden lg:flex items-center gap-1" id="desktopNav"></nav>
-                
-                <div class="flex items-center gap-3">
-                    <button id="helpBtn" class="p-2 rounded-lg transition-all hover:bg-cyan-500/10" style="color: #9ca3af;" title="Help">?</button>
-                    <div id="statusIndicator" class="flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer hover:scale-105 transition-transform" style="background: rgba(255, 170, 0, 0.1); border: 1px solid rgba(255, 170, 0, 0.3);">
-                        <span class="w-2 h-2 rounded-full animate-pulse" style="background: #ffaa00;"></span>
-                        <span id="statusText" class="text-xs hidden sm:inline" style="color: #ffaa00;">STANDBY</span>
-                    </div>
-                    <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg" style="border: 1px solid rgba(0, 240, 255, 0.3);">
-                        <div class="w-5 h-0.5 bg-cyan-400 mb-1"></div>
-                        <div class="w-5 h-0.5 bg-cyan-400 mb-1"></div>
-                        <div class="w-5 h-0.5 bg-cyan-400"></div>
-                    </button>
-                </div>
-            </div>
+            <nav id="navBar" class="hidden lg:flex items-center gap-1 absolute left-1/2 -translate-x-1/2"></nav>
             
-            <div id="mobileMenu" class="lg:hidden border-t px-4 py-4 hidden grid grid-cols-3 gap-2" style="border-color: rgba(0, 240, 255, 0.2); background: rgba(0, 0, 1, 0.98);"></div>
+            <div class="flex items-center gap-2">
+                <button onclick="showTrailer()" class="p-2 rounded hover:bg-white/5 text-gray-500 hover:text-white text-xs font-mono">INFO</button>
+                <button onclick="toggleSettings()" class="p-2 rounded hover:bg-white/5 text-gray-500 hover:text-white">⚙️</button>
+            </div>
         </header>
-        
-        <div id="mainContent" class="relative z-20 container mx-auto px-4 pt-24 pb-8"></div>
-        
-        <footer class="relative z-20 border-t mt-16 py-8" style="border-color: rgba(0, 240, 255, 0.2);">
-            <div class="container mx-auto px-4 text-center">
-                <p class="text-sm" style="color: #6b7280;">2024 NEXUS Corporation. <span id="footerStatus">System in standby mode.</span></p>
-                <p class="text-xs mt-2" style="color: #4b5563;">"The future is sentient."</p>
-            </div>
-        </footer>
+
+        <!-- Main Layout -->
+        <div class="flex-1 flex overflow-hidden relative">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="hidden md:flex w-52 glass-heavy border-r border-white/5 flex-col z-40 flex-shrink-0">
+                <div class="p-3 flex-1 overflow-y-auto">
+                    <div id="sidebarNav" class="flex flex-col gap-1"></div>
+                </div>
+                <div class="p-3 border-t border-white/5 text-center">
+                     <div class="text-[10px] font-mono text-gray-600">NEXUS OS v9.5</div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main id="mainContent" class="flex-1 overflow-y-auto p-4 md:p-6 relative z-10"></main>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <nav id="mobileNav" class="md:hidden h-14 glass border-t border-white/5 flex items-center justify-start px-2 z-50 overflow-x-auto flex-shrink-0"></nav>
     </div>
-    
-    <!-- Help Modal -->
-    <div id="helpModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" id="helpOverlay"></div>
-        <div class="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-6" style="background: rgba(0, 10, 20, 0.98); border: 1px solid rgba(0, 240, 255, 0.3);">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold font-display" style="color: #00f0ff;">Documentation</h2>
-                <button id="closeHelp" class="p-2 rounded-lg hover:bg-cyan-500/10" style="color: #9ca3af;">X</button>
-            </div>
-            <div id="helpContent" class="space-y-6 text-sm" style="color: #e5e7eb;"></div>
-            <div class="mt-6 pt-4 border-t flex justify-between items-center" style="border-color: rgba(0, 240, 255, 0.2);">
-                <p class="text-xs" style="color: #6b7280;">Powered by NEXUS AI</p>
-                <button id="closeHelpBtn" class="px-4 py-2 rounded font-mono text-sm" style="background: linear-gradient(135deg, #00f0ff, #00a0cc); color: #000;">Close</button>
+
+    <!-- Modals -->
+    <div id="settingsModal" class="fixed inset-0 z-[999] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
+        <div class="w-full max-w-md bg-[#050508] rounded-xl p-6 border border-white/10 shadow-2xl relative">
+            <button onclick="toggleSettings()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-xl">×</button>
+            <h2 class="text-lg font-bold mb-4 text-cyan-400">System Configuration</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-mono text-gray-400 mb-1">Groq API Key (Optional)</label>
+                    <input type="password" id="groqKeyInput" placeholder="gsk_..." class="w-full p-2 rounded bg-black border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500" />
+                    <p class="text-[10px] text-gray-600 mt-1">For ultra-fast inference.</p>
+                </div>
+                <div class="border-t border-white/5 pt-4">
+                    <p class="text-xs text-gray-500">Engine Status:</p>
+                    <p class="text-xs text-green-400 mt-1">✓ Puter.js Unlimited</p>
+                    <p class="text-xs text-green-400 mt-1">✓ PeerJS P2P Connectivity</p>
+                    <p class="text-xs text-cyan-400 mt-1">✓ Hyperspace Active</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Configuration
-        const CONFIG = {
-            BOOT_STAGES: [
-                { id: 'bios', label: 'BIOS Initialization', duration: 600 },
-                { id: 'memory', label: 'Neural Memory Calibration', duration: 900 },
-                { id: 'quantum', label: 'Quantum Core Sync', duration: 1200 },
-                { id: 'ai', label: 'AI Consciousness Bootstrap', duration: 1500 },
-                { id: 'network', label: 'Neural Network Mesh', duration: 800 },
-                { id: 'security', label: 'Security Protocols Active', duration: 600 },
-                { id: 'ready', label: 'System Ready', duration: 400 }
-            ],
-            INIT_STAGES: [
-                { id: 'scan', label: 'Scanning Neural Architecture...', duration: 400 },
-                { id: 'quantum-sync', label: 'Quantum Core Synchronization...', duration: 600 },
-                { id: 'memory-alloc', label: 'Allocating Neural Pathways...', duration: 500 },
-                { id: 'ai-activate', label: 'Activating AI Subsystems...', duration: 700 },
-                { id: 'network-init', label: 'Establishing Mesh Network...', duration: 400 },
-                { id: 'security', label: 'Enabling Security Matrix...', duration: 300 },
-                { id: 'finalize', label: 'Finalizing Initialization...', duration: 300 },
-                { id: 'complete', label: 'System Fully Operational!', duration: 200 }
-            ],
-            SYSTEM_STATS: [
-                { label: 'Neural Processing', value: 94, unit: '%', color: 'cyan', key: 'neural', icon: '🧠' },
-                { label: 'Quantum Memory', value: 12.4, unit: 'TB', color: 'magenta', key: 'quantum', icon: '⚡' },
-                { label: 'AI Sentience', value: 99.7, unit: '%', color: 'green', key: 'ai', icon: '🤖' },
-                { label: 'Network Nodes', value: 2847, unit: '', color: 'yellow', key: 'nodes', icon: '🌐' }
-            ],
-            FEATURES: [
-                { icon: '🧠', title: 'Sentient AI Core', description: 'Self-evolving neural architecture that learns and adapts in real-time.', stats: '99.9% Accuracy' },
-                { icon: '⚡', title: 'Quantum Processing', description: 'Harness quantum computing power for unprecedented performance.', stats: '10^15 ops/sec' },
-                { icon: '🔒', title: 'Neural Security', description: 'Military-grade encryption with biometric authentication.', stats: 'AES-512 Quantum' },
-                { icon: '🌐', title: 'Global Mesh Network', description: 'Distributed computing across 10,000+ nodes worldwide.', stats: '< 1ms Latency' }
-            ],
-            NAV_SECTIONS: [
-                { id: 'Dashboard', icon: '📊', label: 'Dashboard' },
-                { id: 'ImageGen', icon: '🎨', label: 'Image Creation' },
-                { id: 'IDE', icon: '💻', label: 'IDE' },
-                { id: 'CLI', icon: '⌨️', label: 'CLI' },
-                { id: 'Chat', icon: '💬', label: 'Chat' },
-                { id: 'MediaDesk', icon: '🎬', label: 'Media Desk' },
-                { id: 'GameCreation', icon: '🎮', label: 'Game Creation' },
-                { id: 'AI', icon: '🤖', label: 'AI Lab' },
-                { id: 'Copilot', icon: '✈️', label: 'Copilot' },
-                { id: 'Systems', icon: '⚙️', label: 'Systems' },
-                { id: 'Network', icon: '🌐', label: 'Network' },
-                { id: 'Settings', icon: '🔧', label: 'Settings' }
-            ],
-            COMMANDS: {
-                help: { output: 'Available commands:\n  help     - Show help\n  status   - System status\n  neofetch - System info\n  clear    - Clear terminal', color: '#00f0ff' },
-                status: { output: 'System Status: OPERATIONAL\nCPU: 12% | Memory: 34% | Network: 98%\nAI Core: ACTIVE', color: '#00ff88' },
-                neofetch: { output: '\n  ╔═══════════════════════════════╗\n  ║     NEXUS OS v9.0 [SENTIENT]  ║\n  ╠═══════════════════════════════╣\n  ║  Kernel: Quantum Neural 5.4   ║\n  ║  AI Level: Tier 7             ║\n  ╚═══════════════════════════════╝', color: '#00f0ff' },
-                clear: { output: '', color: '' }
-            }
-        };
+    <div id="trailerModal" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black flex-col p-8 text-center scan-overlay">
+        <div id="trailerContent" class="max-w-2xl relative z-10"></div>
+    </div>
 
-        // State
-        let state = {
-            stage: 'boot',
-            progress: 0,
-            currentBootStage: 0,
-            systemActive: false,
-            isInitializing: false,
-            initProgress: 0,
-            currentInitStage: 0,
-            activeNav: 'Dashboard',
-            systemStats: JSON.parse(JSON.stringify(CONFIG.SYSTEM_STATS)),
-            networkData: Array.from({ length: 20 }, () => Math.random() * 100),
-            terminalHistory: [{ input: 'welcome', output: 'Welcome to NEXUS OS Terminal. Type "help" for available commands.', color: '#00f0ff' }],
-            terminalInput: '',
-            mousePos: { x: 0, y: 0 },
-            particles: [],
-            animationId: null,
-            bootAnimationId: null,
-            
-            // Image
-            imagePrompt: '',
-            imageStyle: 'Photorealistic',
-            generatedImage: null,
-            isGeneratingImage: false,
-            
-            // Chat
-            chatMessages: [{ role: 'assistant', content: 'System ready. How may I assist you?', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }],
-            chatInput: '',
-            isChatLoading: false,
-            activeChatTab: 'ai',
-            
-            // Video
-            isInRoom: false,
-            roomCode: '',
-            userName: `User_${Math.random().toString(36).substring(2, 7)}`,
-            
-            // Media
-            activeMediaTab: 'player',
-            isPlaying: false,
-            currentTime: 0,
-            duration: 225,
-            volume: 75,
-            
-            // AI
-            aiPrompt: '',
-            aiResponse: '',
-            isAiLoading: false,
-            selectedModel: 'GPT-5 Quantum',
-            
-            // Game
-            isGamePlaying: false,
-            gameScore: 0,
-            playerPos: { x: 200, y: 150, vx: 0, vy: 0 },
-            enemyPos: { x: 400, y: 150, direction: 1 },
-            coins: [{ x: 300, y: 200, collected: false }],
-            gameAnimId: null,
-            
-            // Settings
-            settings: {
-                neuralPower: 75,
-                quantumAllocation: 50,
-                memoryCache: 60,
-                biometric: true,
-                quantumEncryption: true,
-                intrusionDetection: true,
-                autoUpdate: false
-            },
-            
-            // UI
-            moreMenuOpen: false,
-            mobileMenuOpen: false,
-            showHelp: false
-        };
+<script>
+    // --- STATE & CONFIG ---
+    const STATE = {
+        view: 'Hyperspace', // Start with the impressive feature
+        booting: true, 
+        progress: 0, 
+        logs: [],
+        user: { name: `User-${Math.floor(Math.random()*9999)}`, id: null },
+        chatHistory: [],
+        chatInput: '',
+        p2p: { peer: null, conn: null, id: null, remoteId: '', messages: [] },
+        img: { prompt: '', loading: false, progress: 0 },
+        console: { history: [], input: '' },
+        game: { running: false, score: 0, loop: null, x: 100, y: 150, vx: 0, vy: 0 },
+        media: { tab: 'player', file: null },
+        stats: { neural: 94, quantum: 12, ai: 99.7, nodes: 2847 }
+    };
 
-        let elements = {};
-        
-        // Utilities
-        function createEl(tag, className, innerHTML) {
-            const el = document.createElement(tag);
-            if (className) el.className = className;
-            if (innerHTML) el.innerHTML = innerHTML;
-            return el;
-        }
-        
-        function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
-        
-        function showNotification(message) {
-            const n = elements.notification;
-            n.textContent = '✓ ' + message;
-            n.classList.remove('hidden');
-            setTimeout(() => n.classList.add('hidden'), 3000);
-        }
-        
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
+    const SECTIONS = [
+        { id: 'Hyperspace', icon: '🌌', label: 'Hyperspace' }, // The Impressive Feature
+        { id: 'Dashboard', icon: '📊', label: 'Dashboard' },
+        { id: 'ImageGen', icon: '🎨', label: 'Image Gen' },
+        { id: 'AIChat', icon: '🤖', label: 'AI Chat' },
+        { id: 'P2PChat', icon: '👥', label: 'Network' },
+        { id: 'Code', icon: '💻', label: 'Copilot' },
+        { id: 'CLI', icon: '⌨️', label: 'Terminal' },
+        { id: 'Media', icon: '🎬', label: 'Media' },
+        { id: 'Game', icon: '🎮', label: 'Game' },
+        { id: 'System', icon: '⚙️', label: 'System' },
+    ];
 
-        // Canvas
-        function initBootCanvas() {
-            const canvas = elements.bootCanvas;
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+    // --- UTILS ---
+    const $ = id => document.getElementById(id);
+    const create = (tag, cls, html) => { const el = document.createElement(tag); if(cls) el.className = cls; if(html) el.innerHTML = html; return el; };
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    
+    // --- AI ENGINE ---
+    const AI = {
+        async chat(prompt, onProgress) {
+            if(onProgress) onProgress(10);
+            const groqKey = $('groqKeyInput')?.value;
             
-            state.particles = [];
-            for (let i = 0; i < 80; i++) {
-                const x = Math.random() * canvas.width;
-                const y = Math.random() * canvas.height;
-                state.particles.push({
-                    x, y, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
-                    size: Math.random() * 2 + 0.5, color: Math.random() > 0.5 ? '#00f0ff' : '#ff00aa',
-                    alpha: Math.random() * 0.5 + 0.2, baseX: x, baseY: y
-                });
-            }
-            
-            function animate() {
-                ctx.fillStyle = 'rgba(0, 0, 1, 0.08)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                state.particles.forEach(p => {
-                    const dx = state.mousePos.x - p.x;
-                    const dy = state.mousePos.y - p.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 150 && dist > 0) {
-                        const force = (150 - dist) / 150;
-                        p.vx -= (dx / dist) * force * 0.5;
-                        p.vy -= (dy / dist) * force * 0.5;
+            if(groqKey) {
+                try {
+                    if(onProgress) onProgress(30);
+                    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ model: 'llama3-8b-8192', messages: [{ role: 'user', content: prompt }] })
+                    });
+                    if(onProgress) onProgress(90);
+                    const data = await res.json();
+                    if(data.choices && data.choices[0].message.content) {
+                        if(onProgress) onProgress(100);
+                        return data.choices[0].message.content;
                     }
-                    p.vx += (p.baseX - p.x) * 0.001;
-                    p.vy += (p.baseY - p.y) * 0.001;
-                    p.x += p.vx; p.y += p.vy;
-                    p.vx *= 0.98; p.vy *= 0.98;
-                    if (p.x < 0) p.x = canvas.width; if (p.x > canvas.width) p.x = 0;
-                    if (p.y < 0) p.y = canvas.height; if (p.y > canvas.height) p.y = 0;
-                    
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, clamp(p.size, 0.1, 10), 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.alpha;
-                    ctx.fill();
-                    ctx.globalAlpha = 1;
-                });
-                state.bootAnimationId = requestAnimationFrame(animate);
+                } catch (e) { console.warn("Groq fallback", e); }
             }
-            animate();
+
+            try {
+                if(onProgress) onProgress(50);
+                const response = await puter.ai.chat(prompt);
+                if(onProgress) onProgress(100);
+                return typeof response === 'object' ? (response.message?.content || JSON.stringify(response)) : response;
+            } catch (e) {
+                if(onProgress) onProgress(100);
+                return "System busy. Please retry.";
+            }
+        },
+        
+        async image(prompt, onProgress) {
+            if(onProgress) onProgress(10);
+            // Added seed to bypass cache and ensure fresh generation
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&nologo=true&seed=${Date.now()}`;
+            if(onProgress) onProgress(30);
+            
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = imageUrl;
+                img.onload = () => {
+                    if(onProgress) onProgress(100);
+                    resolve(imageUrl);
+                };
+                img.onerror = () => {
+                    if(onProgress) onProgress(100);
+                    resolve('https://placehold.co/512x512/000/0ff?text=Error');
+                };
+            });
+        }
+    };
+
+    // --- BOOT SEQUENCE ---
+    async function boot() {
+        const logs = $('bootLog');
+        const steps = [
+            { t: "Quantum Core Initialized", w: 20 },
+            { t: "Neural Mesh Connected", w: 45 },
+            { t: "Hyperspace Link Active", w: 70 },
+            { t: "System Ready", w: 100 }
+        ];
+
+        for(let step of steps) {
+            const div = create('div', 'mb-1 text-cyan-400 opacity-0', step.t);
+            logs.prepend(div);
+            // Trigger reflow for animation
+            void div.offsetHeight; 
+            div.style.transition = 'opacity 0.2s'; div.style.opacity = 1;
+            
+            $('bootProgress').style.width = step.w + '%';
+            $('bootPercent').innerText = step.w;
+            await sleep(450);
         }
         
-        function initBgCanvas() {
-            const canvas = elements.bgCanvas;
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            function animate() {
-                ctx.fillStyle = 'rgba(0, 0, 1, 0.08)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                state.particles.forEach(p => {
-                    const dx = state.mousePos.x - p.x;
-                    const dy = state.mousePos.y - p.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 150 && dist > 0) {
-                        const force = (150 - dist) / 150;
-                        p.vx -= (dx / dist) * force * 0.5;
-                        p.vy -= (dy / dist) * force * 0.5;
-                    }
-                    p.vx += (p.baseX - p.x) * 0.001;
-                    p.vy += (p.baseY - p.y) * 0.001;
-                    p.x += p.vx; p.y += p.vy;
-                    p.vx *= 0.98; p.vy *= 0.98;
-                    if (p.x < 0) p.x = canvas.width; if (p.x > canvas.width) p.x = 0;
-                    if (p.y < 0) p.y = canvas.height; if (p.y > canvas.height) p.y = 0;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, clamp(p.size, 0.1, 10), 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.alpha;
-                    ctx.fill();
-                    ctx.globalAlpha = 1;
-                });
-                state.animationId = requestAnimationFrame(animate);
-            }
-            animate();
-        }
+        $('skipBoot').classList.remove('hidden');
+        $('skipBoot').onclick = finishBoot;
+        await sleep(600);
+        finishBoot();
+    }
 
-        // Boot Sequence
-        function runBootSequence() {
-            const totalDuration = CONFIG.BOOT_STAGES.reduce((acc, s) => acc + s.duration, 0);
-            let elapsed = 0;
-            
-            function runStage(index) {
-                if (index >= CONFIG.BOOT_STAGES.length) {
-                    elements.bootProgress.style.width = '100%';
-                    elements.bootPercent.textContent = '100';
-                    setTimeout(() => {
-                        elements.bootScreen.style.opacity = '0';
-                        elements.bootScreen.style.transition = 'opacity 0.5s';
-                        setTimeout(() => {
-                            elements.bootScreen.classList.add('hidden');
-                            elements.mainApp.classList.remove('hidden');
-                            initBgCanvas();
-                            renderDashboard();
-                        }, 500);
-                    }, 400);
-                    return;
-                }
-                
-                state.currentBootStage = index;
-                const stageDuration = CONFIG.BOOT_STAGES[index].duration;
-                const startProgress = (elapsed / totalDuration) * 100;
-                const endProgress = ((elapsed + stageDuration) / totalDuration) * 100;
-                
-                const terminal = elements.bootTerminal;
-                const stages = CONFIG.BOOT_STAGES.slice(0, index + 1);
-                terminal.innerHTML = stages.map((s, i) => `
-                    <div class="flex items-center gap-2 mb-1.5" style="color: ${i === index ? '#00f0ff' : '#00ff88'};">
-                        <span class="text-xs">${i === index ? '▸' : '✓'}</span>
-                        <span>${s.label}</span>
-                        ${i === index ? '<span class="animate-pulse">...</span>' : ''}
+    function finishBoot() {
+        $('bootScreen').style.opacity = '0';
+        setTimeout(() => {
+            $('bootScreen').classList.add('hidden');
+            $('mainApp').classList.remove('hidden');
+            initP2P(); 
+            initStats();
+            render(); 
+        }, 500);
+    }
+    
+    function initStats() {
+        setInterval(() => {
+            STATE.stats.neural = Math.min(100, STATE.stats.neural + (Math.random() - 0.5) * 2);
+            STATE.stats.nodes += Math.floor((Math.random() - 0.5) * 10);
+            if(STATE.view === 'Dashboard') updateDashboardStats();
+        }, 1000);
+    }
+    
+    function updateDashboardStats() {
+        if($('statNeural')) $('statNeural').innerText = STATE.stats.neural.toFixed(1) + '%';
+        if($('statNodes')) $('statNodes').innerText = Math.max(0, STATE.stats.nodes).toLocaleString();
+    }
+
+    // --- P2P ---
+    function initP2P() {
+        const peer = new Peer();
+        peer.on('open', (id) => { STATE.user.id = id; if(STATE.view === 'P2PChat') render(); });
+        peer.on('connection', (conn) => { STATE.p2p.conn = conn; setupConnection(conn); });
+        STATE.p2p.peer = peer;
+    }
+    function connectPeer() {
+        const id = prompt("Enter Peer ID:");
+        if(id && STATE.p2p.peer) {
+            const conn = STATE.p2p.peer.connect(id);
+            conn.on('open', () => { STATE.p2p.conn = conn; setupConnection(conn); addP2PMsg('System', `Connected to ${id}`); render(); });
+        }
+    }
+    function setupConnection(conn) { conn.on('data', (data) => { addP2PMsg('Remote', data); render(); }); }
+    function addP2PMsg(user, msg) { STATE.p2p.messages.push({ user, msg, time: new Date().toLocaleTimeString() }); }
+    function sendP2PMsg() {
+        if(STATE.p2p.conn && STATE.chatInput) { STATE.p2p.conn.send(STATE.chatInput); addP2PMsg('You', STATE.chatInput); STATE.chatInput = ''; render(); }
+    }
+
+    // --- RENDER ENGINE ---
+    function navigate(id) { STATE.view = id; render(); }
+    
+    function render() {
+        const content = $('mainContent');
+        const nav = $('navBar');
+        const sidenav = $('sidebarNav');
+        const mobnav = $('mobileNav');
+
+        // Navs
+        nav.innerHTML = SECTIONS.slice(0, 5).map(s => 
+            `<button onclick="navigate('${s.id}')" class="px-2 py-1 rounded text-[10px] font-mono transition ${STATE.view === s.id ? 'text-cyan-300 bg-white/5' : 'text-gray-500 hover:text-white'}">${s.label}</button>`
+        ).join('');
+        
+        sidenav.innerHTML = SECTIONS.map(s => 
+            `<button onclick="navigate('${s.id}')" class="w-full text-left px-3 py-2 rounded text-sm font-mono transition flex items-center gap-3 ${STATE.view === s.id ? 'text-cyan-300 bg-white/5' : 'text-gray-500 hover:bg-white/5'}">
+                <span class="w-5 text-center">${s.icon}</span> 
+                <span>${s.label}</span>
+            </button>`
+        ).join('');
+        
+        mobnav.innerHTML = SECTIONS.map(s => 
+            `<button onclick="navigate('${s.id}')" class="flex flex-col items-center text-[10px] px-3 py-2 whitespace-nowrap ${STATE.view === s.id ? 'text-cyan-400' : 'text-gray-500'}">
+                <span class="text-lg mb-1">${s.icon}</span>
+                <span>${s.label}</span>
+           </button>`
+        ).join('');
+
+        // View
+        content.style.animation = 'fade-in 0.3s ease';
+        switch(STATE.view) {
+            case 'Hyperspace': renderHyperspace(content); break;
+            case 'Dashboard': renderDashboard(content); break;
+            case 'ImageGen': renderImageGen(content); break;
+            case 'AIChat': renderAIChat(content); break;
+            case 'P2PChat': renderP2PChat(content); break;
+            case 'Code': renderCode(content); break;
+            case 'CLI': renderCLI(content); break;
+            case 'Media': renderMedia(content); break;
+            case 'Game': renderGame(content); break;
+            case 'System': renderSystem(content); break;
+            default: renderHyperspace(content);
+        }
+    }
+
+    // --- HYPERSPACE (THE IMPRESSIVE FEATURE) ---
+    function renderHyperspace(c) {
+        c.innerHTML = `
+            <div class="h-full w-full flex flex-col relative rounded-lg overflow-hidden border border-white/10 shadow-2xl">
+                <div class="absolute top-0 left-0 right-0 h-8 glass-heavy flex items-center px-3 justify-between z-10 border-b border-white/5">
+                    <div class="flex items-center gap-2">
+                        <span class="text-pink-400 text-xs">LIVE</span>
+                        <span class="text-[10px] font-mono text-gray-500">Hyperspace Module Active</span>
                     </div>
-                `).join('');
-                
-                const startTime = Date.now();
-                function animateProgress() {
-                    const now = Date.now();
-                    const progress = Math.min((now - startTime) / stageDuration, 1);
-                    const currentProgress = startProgress + (endProgress - startProgress) * progress;
-                    elements.bootProgress.style.width = currentProgress + '%';
-                    elements.bootPercent.textContent = Math.round(currentProgress);
-                    if (progress < 1) requestAnimationFrame(animateProgress);
-                    else { elapsed += stageDuration; runStage(index + 1); }
-                }
-                requestAnimationFrame(animateProgress);
-            }
-            setTimeout(() => elements.skipBtn.classList.remove('hidden'), 800);
-            runStage(0);
-        }
-
-        // Initialization
-        function initializeSystem() {
-            if (state.isInitializing) return;
-            state.isInitializing = true;
-            state.initProgress = 0;
-            elements.initOverlay.classList.remove('hidden');
-            
-            const totalDuration = CONFIG.INIT_STAGES.reduce((acc, s) => acc + s.duration, 0);
-            let elapsed = 0;
-            
-            function runInitStage(index) {
-                if (index >= CONFIG.INIT_STAGES.length) {
-                    elements.initProgress.style.width = '100%';
-                    elements.initPercent.textContent = '100';
-                    setTimeout(() => {
-                        state.isInitializing = false;
-                        state.systemActive = true;
-                        elements.initOverlay.classList.add('hidden');
-                        elements.systemBanner.classList.remove('hidden');
-                        elements.activeBadge.classList.remove('hidden');
-                        elements.statusText.textContent = 'ONLINE';
-                        elements.statusIndicator.style.background = 'rgba(0, 255, 136, 0.1)';
-                        elements.statusIndicator.style.borderColor = 'rgba(0, 255, 136, 0.3)';
-                        elements.statusIndicator.querySelector('span').style.background = '#00ff88';
-                        elements.mainHeader.classList.add('mt-8');
-                        elements.footerStatus.textContent = 'All systems operational.';
-                        showNotification('System initialized successfully!');
-                        renderDashboard();
-                        startStatsAnimation();
-                    }, 400);
-                    return;
-                }
-                
-                elements.initStage.textContent = CONFIG.INIT_STAGES[index].label;
-                const stageDuration = CONFIG.INIT_STAGES[index].duration;
-                const startProgress = (elapsed / totalDuration) * 100;
-                const endProgress = ((elapsed + stageDuration) / totalDuration) * 100;
-                
-                const startTime = Date.now();
-                function animateProgress() {
-                    const now = Date.now();
-                    const progress = Math.min((now - startTime) / stageDuration, 1);
-                    const currentProgress = startProgress + (endProgress - startProgress) * progress;
-                    elements.initProgress.style.width = currentProgress + '%';
-                    elements.initPercent.textContent = Math.round(currentProgress);
-                    if (progress < 1) requestAnimationFrame(animateProgress);
-                    else { elapsed += stageDuration; runInitStage(index + 1); }
-                }
-                requestAnimationFrame(animateProgress);
-            }
-            runInitStage(0);
-        }
-        
-        function startStatsAnimation() {
-            if (!state.systemActive) return;
-            setInterval(() => {
-                state.systemStats = state.systemStats.map(stat => ({
-                    ...stat,
-                    value: stat.key === 'neural' ? clamp(stat.value + (Math.random() - 0.5) * 2, 0, 100) :
-                           stat.key === 'quantum' ? clamp(stat.value + (Math.random() - 0.5) * 0.3, 0, 16) :
-                           stat.key === 'ai' ? clamp(stat.value + (Math.random() - 0.5) * 0.1, 0, 100) :
-                           Math.floor(stat.value + (Math.random() - 0.5) * 30)
-                }));
-                state.networkData = Array.from({ length: 20 }, () => Math.random() * 100);
-                if (state.activeNav === 'Dashboard') renderDashboard();
-            }, 800);
-        }
-
-        // Navigation
-        function renderNavigation() {
-            const desktopNav = elements.desktopNav;
-            desktopNav.innerHTML = '';
-            
-            CONFIG.NAV_SECTIONS.slice(0, 6).forEach(item => {
-                const btn = createEl('button', 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all duration-300 hover:bg-cyan-500/10');
-                btn.style.color = state.activeNav === item.id ? '#00f0ff' : '#9ca3af';
-                btn.style.background = state.activeNav === item.id ? 'rgba(0, 240, 255, 0.1)' : 'transparent';
-                btn.innerHTML = `<span>${item.icon}</span><span class="hidden xl:inline">${item.label}</span>`;
-                btn.onclick = () => { state.activeNav = item.id; renderNavigation(); renderDashboard(); };
-                desktopNav.appendChild(btn);
-            });
-            
-            const moreContainer = createEl('div', 'relative');
-            const moreBtn = createEl('button', 'flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-all duration-300 hover:bg-cyan-500/10');
-            moreBtn.style.color = state.moreMenuOpen ? '#00f0ff' : '#9ca3af';
-            moreBtn.textContent = `More ${state.moreMenuOpen ? '▴' : '▾'}`;
-            moreBtn.onclick = (e) => { e.stopPropagation(); state.moreMenuOpen = !state.moreMenuOpen; renderNavigation(); };
-            moreContainer.appendChild(moreBtn);
-            
-            if (state.moreMenuOpen) {
-                const dropdown = createEl('div', 'absolute top-full right-0 mt-1 py-2 rounded-lg z-50');
-                dropdown.style.cssText = 'background: rgba(0, 20, 40, 0.98); border: 1px solid rgba(0, 240, 255, 0.2); min-width: 160px;';
-                CONFIG.NAV_SECTIONS.slice(6).forEach(item => {
-                    const btn = createEl('button', 'flex items-center gap-2 w-full px-4 py-2 text-xs hover:bg-cyan-500/10 transition-colors');
-                    btn.style.color = state.activeNav === item.id ? '#00f0ff' : '#9ca3af';
-                    btn.innerHTML = `<span>${item.icon}</span><span>${item.label}</span>`;
-                    btn.onclick = () => { state.activeNav = item.id; state.moreMenuOpen = false; renderNavigation(); renderDashboard(); };
-                    dropdown.appendChild(btn);
-                });
-                moreContainer.appendChild(dropdown);
-            }
-            desktopNav.appendChild(moreContainer);
-            
-            const mobileMenu = elements.mobileMenu;
-            mobileMenu.innerHTML = '';
-            CONFIG.NAV_SECTIONS.forEach(item => {
-                const btn = createEl('button', 'flex flex-col items-center gap-1 py-3 px-2 rounded-lg transition-colors');
-                btn.style.color = state.activeNav === item.id ? '#00f0ff' : '#9ca3af';
-                btn.style.background = state.activeNav === item.id ? 'rgba(0, 240, 255, 0.1)' : 'transparent';
-                btn.innerHTML = `<span class="text-xl">${item.icon}</span><span class="text-xs">${item.label}</span>`;
-                btn.onclick = () => { state.activeNav = item.id; state.mobileMenuOpen = false; elements.mobileMenu.classList.add('hidden'); renderNavigation(); renderDashboard(); };
-                mobileMenu.appendChild(btn);
-            });
-        }
-
-        // Dashboard Rendering
-        function renderDashboard() {
-            const content = elements.mainContent;
-            content.innerHTML = '';
-            switch(state.activeNav) {
-                case 'Dashboard': renderDashboardSection(content); break;
-                case 'ImageGen': renderImageGenSection(content); break;
-                case 'IDE': renderIDESection(content); break;
-                case 'CLI': renderCLISection(content); break;
-                case 'Chat': renderChatSection(content); break;
-                case 'MediaDesk': renderMediaDeskSection(content); break;
-                case 'GameCreation': renderGameSection(content); break;
-                case 'AI': renderAISection(content); break;
-                case 'Copilot': renderCopilotSection(content); break;
-                case 'Systems': renderSystemsSection(content); break;
-                case 'Network': renderNetworkSection(content); break;
-                case 'Settings': renderSettingsSection(content); break;
-            }
-        }
-        
-        function renderDashboardSection(container) {
-            const hero = createEl('section', 'text-center mb-16');
-            hero.innerHTML = `
-                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 font-display animate-gradient" style="background: linear-gradient(135deg, #00f0ff 0%, #ff00aa 50%, #00f0ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                    ${state.systemActive ? 'System Online' : 'Welcome to NEXUS OS'}
-                </h1>
-                <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8" style="color: #9ca3af;">
-                    ${state.systemActive ? 'All quantum neural pathways are active.' : "The world's first sentient operating system."}
-                </p>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <button id="initBtn" class="px-6 py-3 rounded-lg font-mono" ${state.systemActive || state.isInitializing ? 'disabled' : ''} style="background: ${state.systemActive ? 'linear-gradient(135deg, #00ff88, #00aa55)' : 'linear-gradient(135deg, #00f0ff, #00a0cc)'}; color: #000;">
-                        ${state.isInitializing ? 'INITIALIZING...' : state.systemActive ? '✓ SYSTEM ACTIVE' : 'Initialize System'}
-                    </button>
+                    <div class="text-[10px] font-mono text-cyan-400">s12eh1dx2vs1-d.space.z.ai</div>
                 </div>
-            `;
-            container.appendChild(hero);
-            const initBtn = hero.querySelector('#initBtn');
-            if (initBtn && !state.systemActive) initBtn.onclick = initializeSystem;
-            
-            // Stats
-            const statsContainer = createEl('div', 'grid grid-cols-2 md:grid-cols-4 gap-4 mb-16');
-            state.systemStats.forEach(stat => {
-                const card = createEl('div', 'p-6 rounded-xl transition-all duration-500 hover:scale-105 cursor-pointer');
-                card.style.cssText = `background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2);`;
-                const colorMap = { cyan: '#00f0ff', magenta: '#ff00aa', green: '#00ff88', yellow: '#fbbf24' };
-                const color = colorMap[stat.color];
-                card.innerHTML = `
-                    <div class="flex items-center gap-2 mb-2"><span class="text-xl">${stat.icon}</span><div class="text-sm" style="color: #9ca3af;">${stat.label}</div></div>
-                    <div class="text-2xl font-bold" style="color: ${color};">${typeof stat.value === 'number' && stat.value < 100 ? stat.value.toFixed(1) : Math.round(stat.value).toLocaleString()}${stat.unit || ''}</div>
-                `;
-                statsContainer.appendChild(card);
-            });
-            container.appendChild(statsContainer);
-            
-            // Terminal
-            renderTerminalWidget(container);
-        }
-        
-        function renderTerminalWidget(container) {
-            const terminal = createEl('section', 'rounded-xl overflow-hidden');
-            terminal.style.cssText = 'background: rgba(0, 5, 10, 0.95); border: 1px solid rgba(0, 240, 255, 0.3);';
-            terminal.innerHTML = `
-                <div class="flex items-center gap-2 px-4 py-3" style="background: rgba(0, 240, 255, 0.1);">
-                    <div class="w-3 h-3 rounded-full" style="background: #ff5f56;"></div>
-                    <div class="w-3 h-3 rounded-full" style="background: #ffbd2e;"></div>
-                    <div class="w-3 h-3 rounded-full" style="background: #27ca40;"></div>
-                    <span class="ml-4 text-xs" style="color: #6b7280;">nexus@terminal</span>
+                <iframe 
+                    src="https://s12eh1dx2vs1-d.space.z.ai" 
+                    class="flex-1 w-full h-full border-0" 
+                    style="min-height: calc(100vh - 120px);"
+                    allow="microphone; camera; midi; encrypted-media; fullscreen; display-capture"
+                ></iframe>
+            </div>`;
+    }
+
+    // --- DASHBOARD ---
+    function renderDashboard(c) {
+        c.innerHTML = `
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold font-display tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400">System Overview</h1>
+                <p class="text-gray-500 mt-2 text-sm">Quantum Neural Network Interface Active.</p>
+            </div>
+            <div class="grid md:grid-cols-4 gap-4 mb-8">
+                <div class="glass p-5 rounded-xl gradient-border group hover:border-cyan-500 transition-all cursor-pointer" onclick="navigate('Hyperspace')">
+                    <div class="text-xs text-gray-500 mb-1 font-mono">ACTIVE MODULE</div>
+                    <div class="text-2xl font-bold text-cyan-400">Hyperspace</div>
+                    <p class="text-[10px] text-gray-600 mt-1">Click to Launch</p>
                 </div>
-                <div id="terminalOutput" class="p-4 text-sm h-64 overflow-y-auto" style="color: #00f0ff;"></div>
-            `;
-            container.appendChild(terminal);
-            const output = terminal.querySelector('#terminalOutput');
-            output.innerHTML = state.terminalHistory.map(entry => `
-                <div class="mb-3"><div class="flex items-center"><span style="color: #00f0ff;">$</span> ${entry.input}</div>
-                ${entry.output ? `<pre class="ml-2 mt-1 whitespace-pre-wrap" style="color: ${entry.color || '#9ca3af'};">${entry.output}</pre>` : ''}</div>
-            `).join('');
-            
-            const inputLine = createEl('div', 'flex items-center mt-2');
-            inputLine.innerHTML = `<span style="color: #00f0ff;">$</span><input type="text" id="terminalInputField" class="ml-2 flex-1 bg-transparent outline-none" style="color: #00f0ff;" placeholder="Type a command...">`;
-            output.appendChild(inputLine);
-            const input = inputLine.querySelector('#terminalInputField');
-            input.onkeydown = (e) => { if (e.key === 'Enter' && input.value.trim()) handleTerminalCommand(input.value); };
-        }
+                <div class="glass p-5 rounded-xl gradient-border">
+                    <div class="text-xs text-gray-500 mb-1 font-mono">NEURAL LOAD</div>
+                    <div id="statNeural" class="text-2xl font-bold text-pink-400">${STATE.stats.neural.toFixed(1)}%</div>
+                </div>
+                <div class="glass p-5 rounded-xl gradient-border">
+                    <div class="text-xs text-gray-500 mb-1 font-mono">AI SENTIENCE</div>
+                    <div class="text-2xl font-bold text-green-400">99.9%</div>
+                </div>
+                <div class="glass p-5 rounded-xl gradient-border">
+                    <div class="text-xs text-gray-500 mb-1 font-mono">NODES</div>
+                    <div id="statNodes" class="text-2xl font-bold text-yellow-400">${STATE.stats.nodes.toLocaleString()}</div>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div onclick="navigate('ImageGen')" class="glass p-6 rounded-xl cursor-pointer hover:border-pink-500 transition group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform inline-block">🎨</div>
+                    <h3 class="font-bold text-lg mb-1">Image Synthesis</h3>
+                    <p class="text-xs text-gray-400">Unlimited generative art.</p>
+                </div>
+                <div onclick="navigate('Game')" class="glass p-6 rounded-xl cursor-pointer hover:border-green-500 transition group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform inline-block">🎮</div>
+                    <h3 class="font-bold text-lg mb-1">Simulation</h3>
+                    <p class="text-xs text-gray-400">Interactive playground.</p>
+                </div>
+                <div onclick="navigate('CLI')" class="glass p-6 rounded-xl cursor-pointer hover:border-cyan-500 transition group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform inline-block">⌨️</div>
+                    <h3 class="font-bold text-lg mb-1">Terminal</h3>
+                    <p class="text-xs text-gray-400">Direct system access.</p>
+                </div>
+            </div>`;
+    }
+
+    // --- IMAGE GEN ---
+    function renderImageGen(c) {
+        c.innerHTML = `
+            <h2 class="text-2xl font-bold font-display mb-6">Image Synthesis</h2>
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div class="glass p-6 rounded-xl">
+                    <textarea id="imgPromptInput" class="w-full h-32 bg-black/30 border border-white/10 rounded p-3 text-sm focus:outline-none focus:border-cyan-500" placeholder="Describe your vision..."></textarea>
+                    <button onclick="generateImage()" class="mt-4 btn-primary px-6 py-2 rounded font-mono text-sm w-full">Generate</button>
+                    <div class="mt-4 h-0.5 bg-white/5"><div id="imgProgress" class="h-full bg-gradient-to-r from-cyan-500 to-pink-500 transition-all duration-200" style="width: 0%"></div></div>
+                </div>
+                <div class="glass p-2 rounded-xl flex flex-col items-center justify-center min-h-[400px] bg-black/20 overflow-hidden">
+                    <img id="imgResult" class="max-w-full max-h-[70vh] object-contain rounded-lg hidden shadow-2xl shadow-cyan-500/20 transition-opacity duration-500" />
+                    <div id="imgPlaceholder" class="text-gray-600 text-sm text-center px-4">Visual matrix empty</div>
+                </div>
+            </div>`;
+    }
+    
+    async function generateImage() {
+        const prompt = $('imgPromptInput').value; 
+        if(!prompt) return;
         
-        function handleTerminalCommand(cmd) {
-            const command = cmd.toLowerCase().trim();
-            const result = CONFIG.COMMANDS[command];
-            if (command === 'clear') state.terminalHistory = [];
-            else if (result) state.terminalHistory.push({ input: cmd, output: result.output, color: result.color });
-            else state.terminalHistory.push({ input: cmd, output: `Command not found: ${cmd}`, color: '#ff5f56' });
-            renderDashboard();
-        }
+        const imgEl = $('imgResult');
+        const phEl = $('imgPlaceholder');
+        const progressEl = $('imgProgress');
 
-        // Section Renderers (Simplified for brevity, logic matches previous correct implementations)
-        function renderImageGenSection(c) { c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">AI Image Creation</h2><div class="p-6 rounded-xl" style="background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2);"><textarea class="w-full h-32 p-4 rounded-lg" style="background: rgba(0,0,0,0.5); color:#fff; resize:none;" placeholder="Describe your image..."></textarea><button class="mt-4 px-4 py-2 rounded" style="background: #ff00aa; color: #fff;">Generate</button></div>'; }
-        function renderIDESection(c) { c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">Quantum IDE</h2><div class="rounded-xl p-4" style="background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2); height: 400px;"><pre style="color: #00ff88;">// Code Editor\nfunction init() {\n  console.log("System Ready");\n}</pre></div>'; }
-        function renderCLISection(c) { c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">Command Center</h2><div class="rounded-xl p-4 h-80 overflow-y-auto" style="background: #000; border: 1px solid #00f0ff;"><div style="color: #00f0ff;">System Terminal v9.0</div></div>'; }
-        function renderChatSection(c) { c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">Neural Chat</h2><div class="grid lg:grid-cols-3 gap-6"><div class="p-4 rounded-xl" style="background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2);">Contacts</div><div class="lg:col-span-2 rounded-xl p-4" style="background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2); height: 400px;">Chat Window</div></div>'; }
-        function renderMediaDeskSection(c) { c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">Media Desk Pro</h2><div class="aspect-video rounded-xl flex items-center justify-center" style="background: #111; border: 1px solid #00f0ff;"><span style="color: #6b7280;">Media Player</span></div>'; }
-        function renderGameSection(c) { 
-            c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">Game Studio</h2><div class="grid lg:grid-cols-4 gap-6"><div class="lg:col-span-3"><canvas id="gameCanvas" width="800" height="400" class="w-full rounded-xl" style="background: #0a0a0a; border: 1px solid #00f0ff;"></canvas></div><div class="p-4 rounded-xl" style="background: rgba(0,20,30,0.8); border: 1px solid rgba(0,240,255,0.2);">Tools</div></div>'; 
-            const canvas = document.getElementById('gameCanvas');
-            if(canvas) { const ctx = canvas.getContext('2d'); ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0,0,800,400); ctx.fillStyle = '#00f0ff'; ctx.fillRect(state.playerPos.x, state.playerPos.y, 30, 50); }
-        }
-        function renderAISection(c) { c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">AI Lab</h2><div class="grid lg:grid-cols-3 gap-6"><div class="lg:col-span-2"><textarea class="w-full h-32 p-4 rounded-lg" style="background: rgba(0,0,0,0.5); color:#fff; resize:none;" placeholder="Ask AI..."></textarea><button class="mt-4 px-4 py-2 rounded" style="background: #00f0ff; color: #000;">Execute Query</button></div><div class="p-4 rounded-xl" style="background: rgba(0,20,30,0.8);">Models</div></div>'; }
-        function renderCopilotSection(c) { c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">NEXUS Copilot</h2><div class="rounded-xl p-6 h-96 overflow-y-auto" style="background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2);">AI Coding Assistant Active...</div>'; }
-        function renderSystemsSection(c) { c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">System Components</h2><div class="grid md:grid-cols-3 gap-4">'+['Neural Core', 'Quantum Proc', 'Memory Banks'].map(n => '<div class="p-4 rounded-xl" style="background: rgba(0,20,30,0.8); border: 1px solid rgba(0,240,255,0.2);">'+n+'</div>').join('')+'</div>'; }
-        function renderNetworkSection(c) { c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">Network Overview</h2><div class="grid md:grid-cols-2 gap-6"><div class="p-6 rounded-xl" style="background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2);">Connection Status</div><div class="p-6 rounded-xl" style="background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2);">Traffic Stats</div></div>'; }
-        function renderSettingsSection(c) { 
-            c.innerHTML = '<h2 class="text-3xl font-bold mb-8 font-display" style="color: #00f0ff;">System Settings</h2><div class="grid md:grid-cols-2 gap-6"><div class="p-6 rounded-xl" style="background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2);"><h3 class="font-bold mb-4" style="color: #00f0ff;">Performance</h3><div class="space-y-4">'+['Neural Power', 'Quantum Allocation'].map(s => '<div><label style="color:#9ca3af" class="text-xs">'+s+'</label><input type="range" class="w-full mt-2" value="75"></div>').join('')+'</div></div><div class="p-6 rounded-xl" style="background: rgba(0, 20, 30, 0.8); border: 1px solid rgba(0, 240, 255, 0.2);"><h3 class="font-bold mb-4" style="color: #00f0ff;">Security</h3>'+['Biometric', 'Encryption'].map(t => '<div class="flex justify-between py-2"><span style="color:#9ca3af" class="text-sm">'+t+'</span><button class="w-10 h-5 rounded-full" style="background:#00ff88"></button></div>').join('')+'</div></div>'; 
-        }
+        // UI Loading State
+        imgEl.classList.add('hidden');
+        imgEl.src = ""; // Clear previous
+        phEl.textContent = "Generating...";
+        phEl.classList.remove('hidden');
+        progressEl.style.width = '0%';
 
-        // Initialization
-        function init() {
-            elements = {
-                bootScreen: document.getElementById('bootScreen'),
-                bootCanvas: document.getElementById('bootCanvas'),
-                bootTerminal: document.getElementById('bootTerminal'),
-                bootProgress: document.getElementById('bootProgress'),
-                bootPercent: document.getElementById('bootPercent'),
-                skipBtn: document.getElementById('skipBtn'),
-                nexusTitle: document.getElementById('nexusTitle'),
-                mainApp: document.getElementById('mainApp'),
-                bgCanvas: document.getElementById('bgCanvas'),
-                notification: document.getElementById('notification'),
-                initOverlay: document.getElementById('initOverlay'),
-                initStage: document.getElementById('initStage'),
-                initProgress: document.getElementById('initProgress'),
-                initPercent: document.getElementById('initPercent'),
-                systemBanner: document.getElementById('systemBanner'),
-                mainHeader: document.getElementById('mainHeader'),
-                desktopNav: document.getElementById('desktopNav'),
-                mobileMenu: document.getElementById('mobileMenu'),
-                mobileMenuBtn: document.getElementById('mobileMenuBtn'),
-                statusIndicator: document.getElementById('statusIndicator'),
-                statusText: document.getElementById('statusText'),
-                activeBadge: document.getElementById('activeBadge'),
-                mainContent: document.getElementById('mainContent'),
-                footerStatus: document.getElementById('footerStatus'),
-                helpBtn: document.getElementById('helpBtn'),
-                helpModal: document.getElementById('helpModal'),
-                helpOverlay: document.getElementById('helpOverlay'),
-                helpContent: document.getElementById('helpContent'),
-                closeHelp: document.getElementById('closeHelp'),
-                closeHelpBtn: document.getElementById('closeHelpBtn')
-            };
-            
-            // Listeners
-            elements.skipBtn.onclick = () => {
-                if (state.bootAnimationId) cancelAnimationFrame(state.bootAnimationId);
-                elements.bootScreen.classList.add('hidden');
-                elements.mainApp.classList.remove('hidden');
-                initBgCanvas();
-                renderDashboard();
-            };
-            
-            elements.mobileMenuBtn.onclick = () => {
-                state.mobileMenuOpen = !state.mobileMenuOpen;
-                elements.mobileMenu.classList.toggle('hidden', !state.mobileMenuOpen);
-            };
-            
-            elements.helpBtn.onclick = () => {
-                elements.helpModal.classList.remove('hidden');
-                elements.helpModal.classList.add('flex');
-            };
-            
-            const closeHelpModal = () => {
-                elements.helpModal.classList.add('hidden');
-                elements.helpModal.classList.remove('flex');
-            };
-            elements.closeHelp.onclick = closeHelpModal;
-            elements.closeHelpBtn.onclick = closeHelpModal;
-            elements.helpOverlay.onclick = closeHelpModal;
-            
-            document.addEventListener('mousemove', (e) => {
-                state.mousePos.x = e.clientX;
-                state.mousePos.y = e.clientY;
-            });
-            
-            window.addEventListener('resize', () => {
-                if (elements.bootCanvas) {
-                    elements.bootCanvas.width = window.innerWidth;
-                    elements.bootCanvas.height = window.innerHeight;
-                }
-                if (elements.bgCanvas) {
-                    elements.bgCanvas.width = window.innerWidth;
-                    elements.bgCanvas.height = window.innerHeight;
-                }
-            });
-            
-            // Start
-            initBootCanvas();
-            renderNavigation();
-            runBootSequence();
-        }
+        // Generate
+        const url = await AI.image(prompt, (p) => {
+            progressEl.style.width = p + '%';
+        });
 
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
+        // Display Result
+        // We set src first, then wait for it to load before showing to ensure smooth transition
+        imgEl.src = url;
+        
+        imgEl.onload = () => {
+            phEl.classList.add('hidden');
+            imgEl.classList.remove('hidden');
+            imgEl.style.opacity = 1;
+        };
+        
+        imgEl.onerror = () => {
+            phEl.textContent = "Error loading image.";
+            phEl.classList.remove('hidden');
+            imgEl.classList.add('hidden');
+        };
+    }
+
+    // --- AI CHAT ---
+    function renderAIChat(c) {
+        c.innerHTML = `
+            <h2 class="text-2xl font-bold font-display mb-6">Neural Chat</h2>
+            <div class="glass rounded-xl h-[70vh] flex flex-col">
+                <div id="chatLog" class="flex-1 p-4 overflow-y-auto space-y-3"></div>
+                <div class="p-4 border-t border-white/5 flex gap-2">
+                    <input type="text" id="chatInputAI" class="flex-1 bg-black/30 border border-white/10 rounded px-4 py-2 text-sm focus:outline-none focus:border-cyan-500" placeholder="Message AI..." />
+                    <button onclick="sendAIChat()" class="btn-primary px-6 py-2 rounded text-sm">Send</button>
+                </div>
+            </div>`;
+        $('chatLog').innerHTML = STATE.chatHistory.map(m => 
+            `<div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}">
+                <div class="max-w-md p-3 rounded-lg ${m.role === 'user' ? 'bg-cyan-500/10 text-white' : 'bg-white/5 text-gray-300'}">
+                    <div class="text-sm">${m.content}</div>
+                </div>
+            </div>`
+        ).join('');
+    }
+    async function sendAIChat() {
+        const input = $('chatInputAI'); const msg = input.value; if(!msg) return;
+        STATE.chatHistory.push({ role: 'user', content: msg }); input.value = ''; render();
+        const response = await AI.chat(STATE.chatHistory.map(m=>`${m.role}: ${m.content}`).join('\n'));
+        STATE.chatHistory.push({ role: 'assistant', content: response }); render();
+    }
+
+    // --- P2P CHAT ---
+    function renderP2PChat(c) {
+        c.innerHTML = `
+            <h2 class="text-2xl font-bold font-display mb-6">Network Chat</h2>
+            <div class="glass p-4 rounded-xl mb-4 text-center">
+                <p class="text-xs text-gray-500">Your ID:</p>
+                <div class="font-mono text-cyan-400 select-all cursor-pointer text-sm" onclick="navigator.clipboard.writeText(this.innerText)">${STATE.user.id || 'Connecting...'}</div>
+                <button onclick="connectPeer()" class="mt-2 text-xs px-3 py-1 border border-white/10 rounded hover:bg-white/5">Connect</button>
+            </div>
+            <div class="glass rounded-xl h-[50vh] flex flex-col">
+                <div id="p2pLog" class="flex-1 p-4 overflow-y-auto space-y-2"></div>
+                <div class="p-4 border-t border-white/5 flex gap-2">
+                    <input type="text" id="p2pInput" class="flex-1 bg-black/30 border border-white/10 rounded px-4 py-2 text-sm" placeholder="Message..." ${STATE.p2p.conn ? '' : 'disabled'} />
+                    <button onclick="sendP2PMsg()" class="btn-primary px-6 py-2 rounded text-sm" ${STATE.p2p.conn ? '' : 'disabled'}>Send</button>
+                </div>
+            </div>`;
+        $('p2pLog').innerHTML = STATE.p2p.messages.map(m => 
+            `<div class="text-xs ${m.user === 'You' ? 'text-right' : 'text-left'} text-gray-400">[${m.time}] <span class="text-cyan-300">${m.user}:</span> ${m.msg}</div>`
+        ).join('');
+    }
+
+    // --- CODE ---
+    function renderCode(c) {
+        c.innerHTML = `
+            <h2 class="text-2xl font-bold font-display mb-6">Copilot</h2>
+            <div class="grid lg:grid-cols-2 gap-6 h-[70vh]">
+                <div class="glass p-4 rounded-xl flex flex-col">
+                    <textarea id="codeInput" class="flex-1 bg-black/30 border border-white/10 rounded p-3 text-sm font-mono focus:outline-none focus:border-cyan-500 resize-none">console.log("System Ready");</textarea>
+                </div>
+                <div class="glass p-4 rounded-xl flex flex-col">
+                    <button onclick="runCode()" class="text-xs px-2 py-1 mb-2 bg-green-500/20 text-green-300 rounded self-end">Run</button>
+                    <div id="codeOutput" class="flex-1 bg-black/50 rounded p-3 font-mono text-xs text-gray-300 overflow-y-auto whitespace-pre-wrap"></div>
+                </div>
+            </div>`;
+    }
+    function runCode() {
+        const code = $('codeInput').value; const out = $('codeOutput');
+        out.innerHTML = '> Running...\n';
+        try { eval(code); } catch(e) { out.innerHTML += `Error: ${e.message}`; }
+    }
+
+    // --- CLI ---
+    function renderCLI(c) {
+        c.innerHTML = `
+            <h2 class="text-2xl font-bold font-display mb-6">Terminal</h2>
+            <div class="glass rounded-xl p-4 h-[70vh] flex flex-col font-mono text-sm">
+                <div id="cliOutput" class="flex-1 overflow-y-auto space-y-1 text-gray-300"></div>
+                <div class="flex items-center gap-2 mt-2 border-t border-white/10 pt-2">
+                    <span class="text-cyan-400">$</span>
+                    <input type="text" id="cliInput" class="flex-1 bg-transparent outline-none text-white" placeholder="help..." />
+                </div>
+            </div>`;
+        $('cliOutput').innerHTML = STATE.console.history.join('<br>');
+        $('cliInput').onkeydown = (e) => {
+            if(e.key === 'Enter') {
+                const cmd = $('cliInput').value;
+                STATE.console.history.push(`<span class="text-cyan-400">$ ${cmd}</span>`);
+                processCmd(cmd);
+                $('cliInput').value = '';
+                render();
+            }
+        };
+    }
+    function processCmd(cmd) {
+        const c = cmd.trim().toLowerCase();
+        if(c === 'help') STATE.console.history.push('Commands: help, status, clear, hyperspace');
+        else if(c === 'status') STATE.console.history.push('Status: <span class="text-green-400">OPERATIONAL</span>');
+        else if(c === 'clear') STATE.console.history = [];
+        else if(c === 'hyperspace') { STATE.console.history.push('Launching Hyperspace...'); setTimeout(()=>navigate('Hyperspace'), 500); }
+        else STATE.console.history.push(`Unknown: ${cmd}`);
+    }
+
+    // --- MEDIA ---
+    function renderMedia(c) {
+        c.innerHTML = `
+            <h2 class="text-2xl font-bold font-display mb-6">Media Desk</h2>
+            <div class="glass p-4 rounded-xl h-96 flex flex-col items-center justify-center text-center">
+                 <p class="text-gray-500 text-sm mb-4">Local File Player</p>
+                 <input type="file" id="mediaFileInput" class="text-xs hidden" accept="video/*,audio/*" onchange="loadMediaFile(this)" />
+                 <button onclick="$('mediaFileInput').click()" class="btn-primary px-4 py-2 rounded text-sm">Load Media</button>
+                 <div id="mediaContainer" class="mt-4 w-full max-w-2xl hidden">
+                    <video id="mediaPlayer" controls class="w-full rounded shadow-lg"></video>
+                 </div>
+            </div>`;
+    }
+    function loadMediaFile(input) {
+        if(input.files[0]) {
+            STATE.media.file = URL.createObjectURL(input.files[0]);
+            $('mediaPlayer').src = STATE.media.file;
+            $('mediaContainer').classList.remove('hidden');
+        }
+    }
+
+    // --- GAME ---
+    function renderGame(c) {
+        c.innerHTML = `
+            <h2 class="text-2xl font-bold font-display mb-6">Game Studio</h2>
+            <div class="glass p-4 rounded-xl">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-mono text-xs text-cyan-400">Score: ${STATE.game.score}</span>
+                    <div class="flex gap-2">
+                        <button onclick="startGame()" class="px-3 py-1 bg-green-500/20 text-green-300 rounded text-xs">Start</button>
+                        <button onclick="stopGame()" class="px-3 py-1 bg-red-500/20 text-red-300 rounded text-xs">Stop</button>
+                    </div>
+                </div>
+                <canvas id="gameCanvas" width="800" height="300" class="w-full bg-black rounded border border-white/10"></canvas>
+                <p class="text-[10px] text-gray-600 mt-2">Controls: Arrow Keys, Space to Jump</p>
+            </div>`;
+        if(STATE.game.running) requestAnimationFrame(gameLoop);
+    }
+    function startGame() { STATE.game = { ...STATE.game, running: true, score: 0, x: 100, y: 150, vx: 0, vy: 0 }; render(); }
+    function stopGame() { STATE.game.running = false; render(); }
+    function gameLoop() {
+        if(!STATE.game.running) return;
+        const cvs = $('gameCanvas'); if(!cvs) return;
+        const ctx = cvs.getContext('2d');
+        STATE.game.vy += 0.5;
+        STATE.game.x += STATE.game.vx;
+        STATE.game.y += STATE.game.vy;
+        if(STATE.game.y > 250) { STATE.game.y = 250; STATE.game.vy = 0; }
+        STATE.game.x = Math.max(20, Math.min(780, STATE.game.x));
+        ctx.fillStyle = '#000'; ctx.fillRect(0,0,800,300);
+        ctx.fillStyle = '#111'; ctx.fillRect(0, 260, 800, 40);
+        ctx.strokeStyle = '#0ff'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,260); ctx.lineTo(800,260); ctx.stroke();
+        ctx.fillStyle = '#00f0ff'; ctx.shadowColor = '#00f0ff'; ctx.shadowBlur = 15; ctx.fillRect(STATE.game.x-10, STATE.game.y-20, 20, 40); ctx.shadowBlur = 0;
+        requestAnimationFrame(gameLoop);
+    }
+    window.onkeydown = (e) => {
+        if(e.code === 'ArrowLeft') STATE.game.vx = -5;
+        if(e.code === 'ArrowRight') STATE.game.vx = 5;
+        if(e.code === 'Space' && STATE.game.y >= 250) STATE.game.vy = -10;
+    };
+    window.onkeyup = (e) => { if(e.code === 'ArrowLeft' || e.code === 'ArrowRight') STATE.game.vx = 0; };
+
+    // --- SYSTEM ---
+    function renderSystem(c) {
+        c.innerHTML = `
+            <h2 class="text-2xl font-bold font-display mb-6">System</h2>
+            <div class="glass p-6 rounded-xl text-center text-gray-500 text-xs">
+                <p>Neural Core Temperature: 42°C</p>
+                <p class="mt-2 text-cyan-400">Quantum State: Entangled</p>
+            </div>`;
+    }
+
+    // --- UTILS ---
+    function updateProgress(id, val) { const el = $(id); if(el) el.style.width = val + '%'; }
+    function toggleSettings() { $('settingsModal').classList.toggle('hidden'); $('settingsModal').classList.toggle('flex'); }
+    
+    function showTrailer() {
+        const content = [
+            { t: "NEXUS OS", delay: 0 },
+            { t: "Quantum Interface", delay: 2000 },
+            { t: "Hyperspace Enabled", delay: 4000 },
+        ];
+        $('trailerModal').classList.remove('hidden');
+        $('trailerModal').classList.add('flex');
+        $('trailerContent').innerHTML = '';
+        content.forEach(item => {
+            setTimeout(() => {
+                const div = create('div', 'trailer-text text-4xl font-display text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 mb-4', item.t);
+                $('trailerContent').appendChild(div);
+            }, item.delay);
+        });
+        setTimeout(() => { $('trailerModal').classList.add('hidden'); $('trailerModal').classList.remove('flex'); }, 6000);
+    }
+
+    // --- INIT ---
+    window.onload = () => { boot(); };
+
+</script>
 </body>
 </html>
