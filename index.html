@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="NEXUS OS - AI-powered cyberpunk web operating system">
+  <title>NEXUS OS V15 | Cyberpunk Operating System</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Rajdhani', sans-serif; background: #000; color: #e0e0e0; }
+    input, textarea, select { font-size: 16px !important; }
+    input::placeholder, textarea::placeholder { color: rgba(150, 150, 180, 0.7) !important; }
+    input:focus, textarea:focus, button:focus { border-color: #00f0ff !important; outline: none; box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
+    
+    /* Animations */
+    @keyframes gradient { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+    @keyframes glow { 0%, 100% { box-shadow: 0 0 15px #ff00aa, 0 0 30px #8b00ff; } 50% { box-shadow: 0 0 25px #ff00aa, 0 0 50px #8b00ff; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes scanline { 0% { top: -100%; } 100% { top: 100%; } }
+    @keyframes bgMove { 0% { transform: translate(0, 0); } 100% { transform: translate(-50px, -50px); } }
+    @keyframes particleFloat { 0%, 100% { transform: translateY(0) translateX(0); } 25% { transform: translateY(-20px) translateX(10px); } 50% { transform: translateY(-10px) translateX(-10px); } 75% { transform: translateY(-30px) translateX(5px); } }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.5); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00f0ff, #8b00ff); border-radius: 3px; }
+    
+    /* Utility classes */
+    .gradient-text { background: linear-gradient(90deg, #00f0ff, #8b00ff, #ff00aa, #00f0ff); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient 3s ease infinite; }
+    .glow { animation: glow 2s ease-in-out infinite; }
+    .float { animation: float 3s ease-in-out infinite; }
+    .pulse { animation: pulse 2s ease-in-out infinite; }
+    .slide { animation: slideUp 0.3s ease; }
+    .spin { animation: spin 1s linear infinite; }
+    
+    /* Glass effect */
+    .glass { background: rgba(10, 10, 25, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    
+    /* Neon border */
+    .neon-border { border: 1px solid rgba(0, 240, 255, 0.3); box-shadow: 0 0 20px rgba(0, 240, 255, 0.1), inset 0 0 20px rgba(0, 240, 255, 0.05); }
+    
+    /* Cyber card */
+    .cyber-card { background: rgba(5, 5, 15, 0.7); border: 1px solid rgba(0, 240, 255, 0.15); border-radius: 16px; transition: all 0.3s ease; }
+    .cyber-card:hover, .cyber-card:focus { border-color: rgba(0, 240, 255, 0.4); box-shadow: 0 0 30px rgba(0, 240, 255, 0.2); transform: translateY(-2px); outline: none; }
+    
+    /* Cyber button */
+    .cyber-btn { padding: 12px 24px; border: none; border-radius: 10px; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; }
+    .cyber-btn:hover, .cyber-btn:focus { transform: translateY(-2px); box-shadow: 0 5px 25px rgba(0, 240, 255, 0.3); outline: none; }
+    .cyber-btn:active { transform: translateY(0); }
+    .cyber-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    /* Cyber input */
+    .cyber-input { width: 100%; padding: 14px 16px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 10px; color: #fff; font-size: 14px; transition: all 0.3s ease; }
+    .cyber-input:focus { border-color: #00f0ff; box-shadow: 0 0 25px rgba(0, 240, 255, 0.3); }
+    
+    /* Back button */
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; color: #00f0ff; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+    .back-btn:hover, .back-btn:focus { background: rgba(0, 240, 255, 0.2); border-color: rgba(0, 240, 255, 0.4); outline: none; }
+    
+    /* Focus visible */
+    :focus-visible { outline: 2px solid #00f0ff; outline-offset: 2px; }
+    
+    /* Loading spinner */
+    .loader { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    
+    /* Background effects */
+    .live-bg { position: fixed; inset: 0; background: radial-gradient(ellipse at 20% 20%, rgba(0, 240, 255, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(139, 0, 255, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(255, 0, 170, 0.1) 0%, transparent 60%), radial-gradient(ellipse at 10% 90%, rgba(0, 255, 136, 0.08) 0%, transparent 40%); animation: bgMove 20s linear infinite; pointer-events: none; z-index: 0; }
+    .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px); background-size: 50px 50px; pointer-events: none; z-index: 1; }
+    .scanline { position: fixed; left: 0; right: 0; height: 100px; background: linear-gradient(transparent, rgba(0, 240, 255, 0.03), transparent); animation: scanline 8s linear infinite; pointer-events: none; z-index: 2; }
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; }
+    .particle { position: absolute; border-radius: 50%; animation: particleFloat 15s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+  <div id="app" style="width:100%;height:100%"></div>
+  <script src="https://js.puter.com/v2/" async></script>
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════
+    // NEXUS OS V15.0 - CYBERPUNK OPERATING SYSTEM - SINGLE FILE VERSION
+    // ═══════════════════════════════════════════════════════════════════════
+    
+    // Utility Functions
+    const Utils = {
+      escape(str) {
+        if (typeof str !== 'string') return str;
+        const escapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' };
+        return str.replace(/[&<>"']/g, char => escapeMap[char]);
+      },
+      sanitize(str) { return typeof str === 'string' ? str.trim().slice(0, 10000) : ''; },
+      generateId() { return Math.random().toString(36).substr(2, 9); }
+    };
+    
+    // Storage
+    const Storage = {
+      KEY: 'nexus_os_state_v15',
+      save(state) {
+        try { localStorage.setItem(this.KEY, JSON.stringify({ user: state.user, ideCode: state.ideCode, aiMsgs: state.aiMsgs.slice(-20) })); }
+        catch (e) { console.warn('[Storage] Save failed:', e); }
+      },
+      load() {
+        try { const saved = localStorage.getItem(this.KEY); return saved ? JSON.parse(saved) : {}; }
+        catch (e) { return {}; }
+      },
+      clear() { try { localStorage.removeItem(this.KEY); } catch (e) {} }
+    };
+    
+    // Auth Manager
+    const AuthManager = {
+      _validCredentials: ['YWRtaW46bmV4dXMyMDI0', 'bmV4dXM6bmV4dXMxMjM=', 'dXNlcjp1c2VyMTIz'],
+      validate(username, password) {
+        const encoded = btoa(`${username}:${password}`);
+        if (!this._validCredentials.includes(encoded)) return null;
+        const roles = {
+          'admin': { username: 'admin', displayName: 'Admin', role: 'admin', isPremium: true },
+          'nexus': { username: 'nexus', displayName: 'Nexus', role: 'user', isPremium: true },
+          'user': { username: 'user', displayName: 'User', role: 'user', isPremium: false }
+        };
+        return roles[username] || { username, displayName: username, role: 'user', isPremium: false };
+      },
+      createGuestUser() {
+        return { username: 'guest_' + Utils.generateId().slice(0, 4), displayName: 'Guest', role: 'guest', isPremium: false };
+      }
+    };
+    
+    // Audio Manager
+    const AudioManager = {
+      audio: null,
+      isPlaying: false,
+      init() { if (!this.audio) this.audio = new Audio(); },
+      async play(url) {
+        this.init();
+        try { this.audio.src = url; await this.audio.play(); this.isPlaying = true; return true; }
+        catch (e) { this.isPlaying = false; return false; }
+      },
+      toggle() {
+        if (!this.audio) return false;
+        if (this.isPlaying) { this.audio.pause(); this.isPlaying = false; }
+        else if (this.audio.src) { this.audio.play().then(() => { this.isPlaying = true; }).catch(() => {}); }
+        return this.isPlaying;
+      },
+      stop() { if (this.audio) { this.audio.pause(); this.audio.src = ''; this.isPlaying = false; } }
+    };
+    
+    // Game Manager
+    const GameManager = {
+      intervals: new Map(),
+      setInterval(id, fn, delay) { this.clearInterval(id); this.intervals.set(id, setInterval(fn, delay)); },
+      clearInterval(id) { if (this.intervals.has(id)) { clearInterval(this.intervals.get(id)); this.intervals.delete(id); } },
+      cleanup() { this.intervals.forEach(i => clearInterval(i)); this.intervals.clear(); }
+    };
+    
+    // Main App
+    const App = {
+      state: {
+        phase: 'boot', bootP: 0, bootT: 'INITIALIZING', user: null, app: null, note: '', time: '', online: navigator.onLine,
+        aiMsgs: [], aiLoad: false, aiInput: '',
+        copOpen: false, copMsgs: [], copLoad: false,
+        ytRes: [], ytVid: null, ytLoad: false, ytSearch: '',
+        bldP: 0, bldStat: 'idle', bldLog: ['[SYSTEM] Build Console Ready'],
+        radSt: null, radPlay: false, radRes: [], radLoad: false, radSearch: '',
+        termLn: ['[NEXUS] Terminal v15.0 Ready', ''], termInput: '',
+        ideCode: `// NEXUS IDE v15.0\n// Write your JavaScript code here\n\nfunction greet(name) {\n  console.log(\`Hello, \${name}! Welcome to NEXUS OS.\`);\n}\n\ngreet('Cyberpunk');\n\ndocument.body.innerHTML = \`\n  <div style="padding: 20px; font-family: system-ui;">\n    <h1 style="color: #00f0ff;">🧬 NEXUS OS</h1>\n    <p style="color: #ff00aa;">Your code runs here!</p>\n  </div>\n\`;`,
+        artImgs: [], artLoad: false, artPrompt: '',
+        toolProg: 0, toolInst: null,
+        gameType: null,
+        snake: { body: [[7, 7]], dir: [1, 0], food: [10, 10], score: 0, over: false },
+        memory: { cards: [], flipped: [], matched: [], moves: 0, done: false },
+        reaction: { state: 'wait', startTime: 0, score: 0 }
+      },
+      
+      particles: [],
+      renderScheduled: false,
+      
+      initParticles() {
+        const colors = ['#00f0ff', '#8b00ff', '#ff00aa', '#00ff88'];
+        this.particles = Array.from({ length: 15 }, () => ({
+          x: Math.random() * 100, y: Math.random() * 100,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          delay: Math.random() * 15, size: 2 + Math.random() * 4
+        }));
+      },
+      
+      render() {
+        if (this.renderScheduled) return;
+        this.renderScheduled = true;
+        requestAnimationFrame(() => { this.renderScheduled = false; this._doRender(); });
+      },
+      
+      _doRender() {
+        const el = document.getElementById('app');
+        if (!el) return;
+        const S = this.state;
+        const m = window.innerWidth < 768;
+        
+        if (S.phase === 'boot') { el.innerHTML = this.renderBoot(m); return; }
+        if (S.phase === 'login') { el.innerHTML = this.renderLogin(m); return; }
+        el.innerHTML = this.renderDesktop(m);
+      },
+      
+      notify(msg) {
+        this.state.note = msg;
+        this.render();
+        setTimeout(() => { this.state.note = ''; this.render(); }, 2500);
+      },
+      
+      // Render Methods
+      renderBoot(m) {
+        return `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#000 0%,#050510 50%,#000 100%);position:relative;overflow:hidden">
+          <div class="live-bg"></div><div class="grid-overlay"></div><div class="scanline"></div>${this.renderParticles()}
+          <div class="float" style="position:relative;z-index:10;text-align:center">
+            <div style="font-size:${m?'50px':'80px'};font-weight:900;font-family:Orbitron,sans-serif;letter-spacing:10px" class="gradient-text">NEXUS</div>
+            <div style="font-size:${m?'12px':'16px'};font-family:Orbitron,sans-serif;letter-spacing:20px;color:#405060;margin-top:10px">OPERATING SYSTEM</div>
+            <div style="font-size:10px;color:#00f0ff;margin-top:20px;letter-spacing:5px">VERSION 15.0 // CYBERPUNK</div>
+          </div>
+          <div style="position:relative;z-index:10;margin-top:60px;width:${m?'280px':'400px'}">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+              <span style="font-size:10px;color:#505060;font-family:JetBrains Mono,monospace;letter-spacing:2px">${Utils.escape(this.state.bootT)}</span>
+              <span style="font-size:10px;color:#00f0ff;font-family:JetBrains Mono,monospace">${this.state.bootP}%</span>
+            </div>
+            <div style="height:3px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden">
+              <div style="width:${this.state.bootP}%;height:100%;background:linear-gradient(90deg,#00f0ff,#8b00ff,#ff00aa);border-radius:3px;transition:width 0.3s"></div>
+            </div>
+          </div>
+          ${this.renderCornerFrames()}
+        </div>`;
+      },
+      
+      renderLogin(m) {
+        return `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+          <div class="live-bg"></div><div class="grid-overlay"></div><div class="scanline"></div>${this.renderParticles()}
+          <div class="glass neon-border" style="width:${m?'340px':'420px'};border-radius:20px;padding:40px;position:relative;z-index:10">
+            <div style="text-align:center;margin-bottom:30px">
+              <div style="font-size:48px;font-weight:900;font-family:Orbitron,sans-serif" class="gradient-text">NEXUS</div>
+              <div style="font-size:10px;color:#405060;letter-spacing:10px;margin-top:8px">OPERATING SYSTEM</div>
+              <div style="font-size:9px;color:#00f0ff;margin-top:5px">V15.0 CYBERPUNK</div>
+            </div>
+            <form id="login-form" style="display:flex;flex-direction:column;gap:12px">
+              <div style="position:relative"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#505060;font-size:16px">👤</span>
+                <input name="username" placeholder="Username" autocomplete="username" class="cyber-input" style="padding-left:42px" required></div>
+              <div style="position:relative"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#505060;font-size:16px">🔑</span>
+                <input name="password" type="password" placeholder="Password" autocomplete="current-password" class="cyber-input" style="padding-left:42px" required></div>
+              <button type="submit" class="cyber-btn" style="background:linear-gradient(135deg,#00f0ff,#8b00ff);color:#000;margin-top:8px">⚡ ACCESS SYSTEM</button>
+            </form>
+            <div style="display:flex;align-items:center;gap:15px;margin:20px 0">
+              <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(0,240,255,0.3),transparent)"></div>
+              <span style="color:#405060;font-size:10px">OR</span>
+              <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(0,240,255,0.3),transparent)"></div>
+            </div>
+            <button id="guest-btn" class="cyber-btn" style="width:100%;background:transparent;border:1px solid rgba(139,0,255,0.3);color:#fff">🧑 Enter as Guest</button>
+            <div style="text-align:center;margin-top:20px;font-size:9px;color:#305060">Demo: admin/nexus2024 • nexus/nexus123 • user/user123</div>
+          </div>
+        </div>`;
+      },
+      
+      renderDesktop(m) {
+        const S = this.state;
+        return `<div style="width:100%;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden">
+          <div class="live-bg"></div><div class="grid-overlay"></div><div class="scanline"></div>${this.renderParticles()}
+          <header class="glass" style="padding:10px 20px;border-bottom:1px solid rgba(0,240,255,0.15);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:100">
+            <div style="display:flex;align-items:center;gap:15px">
+              <span style="font-family:Orbitron,sans-serif;font-size:16px;font-weight:700" class="gradient-text">NEXUS</span>
+              <span style="font-size:9px;color:#405060">V15.0</span>
+              <span style="font-size:12px;color:#607090;font-family:JetBrains Mono,monospace">${Utils.escape(S.time)}</span>
+              <div style="padding:3px 10px;border-radius:20px;font-size:9px;background:${S.online?'rgba(0,255,136,0.15)':'rgba(255,0,85,0.15)'};color:${S.online?'#00ff88':'#ff0055'};border:1px solid ${S.online?'rgba(0,255,136,0.3)':'rgba(255,0,85,0.3)'}">${S.online?'● ONLINE':'○ OFFLINE'}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              ${S.radPlay?'<span style="font-size:11px;color:#ffcc00">📻 <span class="pulse">●</span></span>':''}
+              <span style="font-size:12px;color:#a0a0a0">${Utils.escape(S.user?.displayName||'Guest')}</span>
+              ${S.user?.role==='admin'?'<span style="padding:3px 8px;border-radius:4px;font-size:9px;background:linear-gradient(135deg,rgba(255,0,170,0.2),rgba(139,0,255,0.2));color:#ff00aa;border:1px solid rgba(255,0,170,0.3)">👑 ADMIN</span>':''}
+              ${S.user?.isPremium?'<span style="padding:3px 8px;border-radius:4px;font-size:9px;background:rgba(255,204,0,0.15);color:#ffcc00;border:1px solid rgba(255,204,0,0.3)">⭐</span>':''}
+              <button id="logout-btn" class="cyber-btn" style="padding:6px 12px;background:rgba(255,0,85,0.15);color:#ff0055;border:1px solid rgba(255,0,85,0.3);font-size:9px">LOGOUT</button>
+            </div>
+          </header>
+          <main style="flex:1;display:flex;overflow:hidden;position:relative;z-index:10">
+            <div style="flex:1;padding:15px;overflow-y:auto">${!S.app?this.renderAppGrid():this.renderApp(m)}</div>
+            ${S.copOpen?this.renderCopilot():''}
+          </main>
+          ${S.note?`<div class="slide glass" style="position:fixed;top:70px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:12px;border:1px solid rgba(0,240,255,0.3);font-size:13px;color:#fff;z-index:1000">${Utils.escape(S.note)}</div>`:''}
+          ${!S.copOpen&&S.app?`<button id="copilot-toggle" class="glow" style="position:fixed;bottom:25px;right:25px;width:55px;height:55px;background:linear-gradient(135deg,#ff00aa,#8b00ff);border:none;border-radius:50%;cursor:pointer;font-size:24px;z-index:100">💡</button>`:''}
+          <footer class="glass" style="padding:6px 20px;border-top:1px solid rgba(0,240,255,0.1);display:flex;justify-content:space-between;font-size:10px;color:#405060;font-family:JetBrains Mono,monospace;position:relative;z-index:100">
+            <div style="display:flex;gap:20px"><span>NEXUS OS V15.0</span><span>CYBERPUNK</span></div>
+            <div style="display:flex;gap:15px"><span>AI: <span style="color:#00ff88">READY</span></span><span>MEM: <span style="color:#00f0ff">OK</span></span></div>
+          </footer>
+        </div>`;
+      },
+      
+      renderParticles() {
+        return `<div class="particles" aria-hidden="true">${this.particles.map(p => 
+          `<div class="particle" style="left:${p.x}%;top:${p.y}%;width:${p.size}px;height:${p.size}px;background:${p.color};box-shadow:0 0 ${p.size*2}px ${p.color};animation-delay:-${p.delay}s"></div>`
+        ).join('')}</div>`;
+      },
+      
+      renderCornerFrames() {
+        return `<div style="position:absolute;top:20px;left:20px;width:50px;height:50px;border-left:2px solid #00f0ff;border-top:2px solid #00f0ff;opacity:0.5"></div>
+          <div style="position:absolute;top:20px;right:20px;width:50px;height:50px;border-right:2px solid #8b00ff;border-top:2px solid #8b00ff;opacity:0.5"></div>
+          <div style="position:absolute;bottom:20px;left:20px;width:50px;height:50px;border-left:2px solid #ff00aa;border-bottom:2px solid #ff00aa;opacity:0.5"></div>
+          <div style="position:absolute;bottom:20px;right:20px;width:50px;height:50px;border-right:2px solid #00f0ff;border-bottom:2px solid #00f0ff;opacity:0.5"></div>`;
+      },
+      
+      renderAppGrid() {
+        const apps = [
+          {id:'ai',n:'AI Chat',i:'🤖',d:'Smart AI'},{id:'yt',n:'YouTube',i:'▶️',d:'Videos'},
+          {id:'bld',n:'Build',i:'🔧',d:'Console'},{id:'rad',n:'Radio',i:'📻',d:'30K+ Stations'},
+          {id:'term',n:'Terminal',i:'⌨️',d:'Commands'},{id:'ide',n:'IDE',i:'💻',d:'Code Editor'},
+          {id:'art',n:'Art',i:'🎨',d:'AI Images'},{id:'game',n:'Games',i:'🎮',d:'Play'},
+          {id:'tool',n:'Tools',i:'🛠️',d:'Install'},{id:'set',n:'Settings',i:'⚙️',d:'Config'}
+        ];
+        return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px">
+          ${apps.map(a=>`<button class="app-card cyber-card" data-app="${a.id}" style="padding:20px 12px;text-align:center;cursor:pointer;border:none;width:100%">
+            <div style="font-size:36px;margin-bottom:10px">${a.i}</div>
+            <div style="font-family:Orbitron,sans-serif;font-size:10px;color:#fff;letter-spacing:1px">${Utils.escape(a.n)}</div>
+            <div style="font-size:9px;color:#405060;margin-top:4px">${Utils.escape(a.d)}</div>
+          </button>`).join('')}
+        </div>`;
+      },
+      
+      renderApp(m) {
+        const hdr = (i,t) => `<div style="display:flex;align-items:center;gap:15px;margin-bottom:15px">
+          <button class="back-btn" id="back-btn">← Back</button>
+          <span style="font-size:24px">${i}</span><span style="font-family:Orbitron,sans-serif;font-size:14px;color:#fff">${Utils.escape(t)}</span>
+        </div>`;
+        
+        const S = this.state;
+        switch(S.app) {
+          case 'ai': return this.renderAIApp(hdr, m);
+          case 'yt': return this.renderYouTubeApp(hdr, m);
+          case 'bld': return this.renderBuildApp(hdr, m);
+          case 'rad': return this.renderRadioApp(hdr, m);
+          case 'term': return this.renderTerminalApp(hdr, m);
+          case 'ide': return this.renderIDEApp(hdr, m);
+          case 'art': return this.renderArtApp(hdr, m);
+          case 'game': return this.renderGamesApp(hdr, m);
+          case 'tool': return this.renderToolsApp(hdr, m);
+          case 'set': return this.renderSettingsApp(hdr, m);
+          default: return '<div style="text-align:center;padding:50px;color:#405060">Select an app</div>';
+        }
+      },
+      
+      renderAIApp(hdr, m) {
+        const S = this.state;
+        return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden">
+          ${hdr('🤖','AI Chat')}
+          <div id="ai-messages" style="flex:1;overflow-y:auto;padding:10px">
+            ${S.aiMsgs.length===0?'<div style="text-align:center;padding:40px;color:#405060"><div style="font-size:48px">🤖</div><div style="margin-top:15px;color:#607090">Start a conversation</div></div>':''}
+            ${S.aiMsgs.map(msg=>`<div style="margin-bottom:15px;display:flex;gap:12px;align-items:flex-start">
+              <div style="width:36px;height:36px;border-radius:10px;background:${msg.r==='user'?'linear-gradient(135deg,#8b00ff,#ff00aa)':'linear-gradient(135deg,#00f0ff,#00a0ff)'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${msg.r==='user'?'👤':'🤖'}</div>
+              <div style="flex:1;background:rgba(${msg.r==='user'?'139,0,255':'0,240,255'},0.08);border-radius:12px;padding:12px 16px;font-size:13px;line-height:1.6;white-space:pre-wrap;border:1px solid rgba(${msg.r==='user'?'139,0,255':'0,240,255'},0.15)">${Utils.escape(msg.c)}</div>
+            </div>`).join('')}
+            ${S.aiLoad?'<div style="text-align:center;color:#607090;padding:10px"><span class="pulse">⏳</span> Thinking...</div>':''}
+          </div>
+          <div style="padding:10px;border-top:1px solid rgba(0,240,255,0.1);display:flex;gap:10px">
+            <input id="ai-input" placeholder="Ask NEXUS AI..." class="cyber-input" style="flex:1" ${S.aiLoad?'disabled':''}>
+            <button id="ai-send" class="cyber-btn" style="background:linear-gradient(135deg,#00f0ff,#00a0ff);color:#000" ${S.aiLoad?'disabled':''}>SEND</button>
+          </div>
+        </div>`;
+      },
+      
+      renderYouTubeApp(hdr, m) {
+        const S = this.state;
+        return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden">
+          ${hdr('▶️','YouTube')}
+          <div style="display:flex;gap:10px;margin-bottom:15px">
+            <input id="yt-input" placeholder="Search videos..." class="cyber-input" style="flex:1" ${S.ytLoad?'disabled':''}>
+            <button id="yt-search" class="cyber-btn" style="background:#ff0000;color:#fff" ${S.ytLoad?'disabled':''}>${S.ytLoad?'<span class="loader"></span>':'SEARCH'}</button>
+          </div>
+          ${S.ytVid?`<iframe style="width:100%;aspect-ratio:16/9;border-radius:12px;border:none;margin-bottom:15px" src="https://www.youtube.com/embed/${Utils.escape(S.ytVid)}?autoplay=1" allowfullscreen></iframe>`:''}
+          <div style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+            ${S.ytRes.map(v=>`<button class="yt-video cyber-card" data-vid="${Utils.escape(v.id)}" style="overflow:hidden;cursor:pointer;border:none;text-align:left;width:100%">
+              <img src="${Utils.escape(v.t)}" style="width:100%;aspect-ratio:16/9;object-fit:cover" loading="lazy">
+              <div style="padding:10px"><div style="font-size:11px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Utils.escape(v.ti)}</div></div>
+            </button>`).join('')}
+          </div>
+        </div>`;
+      },
+      
+      renderBuildApp(hdr, m) {
+        const S = this.state;
+        return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden">
+          ${hdr('🔧','Build Console')}
+          <button id="build-run" class="cyber-btn" style="background:${S.bldStat==='building'?'#405060':'linear-gradient(135deg,#00ff88,#00aaff)'};color:${S.bldStat==='building'?'#888':'#000'};margin-bottom:15px;width:fit-content" ${S.bldStat==='building'?'disabled':''}>${S.bldStat==='building'?'⏳ BUILDING...':'⚡ START BUILD'}</button>
+          <div style="background:rgba(0,0,0,0.4);border-radius:12px;padding:15px;margin-bottom:15px;border:1px solid rgba(0,255,136,0.15)">
+            <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:11px;color:#607090;font-family:Orbitron,sans-serif">PROGRESS</span><span style="font-size:12px;color:#00ff88;font-family:JetBrains Mono,monospace">${S.bldP}%</span></div>
+            <div style="height:6px;background:rgba(0,255,136,0.1);border-radius:3px;overflow:hidden"><div style="width:${S.bldP}%;height:100%;background:linear-gradient(90deg,#00ff88,#00f0ff);border-radius:3px;transition:width 0.2s"></div></div>
+          </div>
+          <div style="flex:1;overflow-y:auto;background:rgba(0,0,0,0.4);border-radius:12px;padding:15px;font-family:JetBrains Mono,monospace;font-size:11px;border:1px solid rgba(0,240,255,0.1)">
+            ${S.bldLog.map(l=>`<div style="color:${l.startsWith('[')?'#00f0ff':l.includes('✓')||l.includes('✅')?'#00ff88':'#8090a0'};margin-bottom:6px">${Utils.escape(l)}</div>`).join('')}
+          </div>
+        </div>`;
+      },
+      
+      renderRadioApp(hdr, m) {
+        const S = this.state;
+        return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden">
+          ${hdr('📻','Radio Browser')}
+          <div style="display:flex;gap:10px;margin-bottom:15px">
+            <input id="rad-input" placeholder="Search 30,000+ stations..." class="cyber-input" style="flex:1" ${S.radLoad?'disabled':''}>
+            <button id="rad-search" class="cyber-btn" style="background:linear-gradient(135deg,#ffcc00,#ff8800);color:#000" ${S.radLoad?'disabled':''}>${S.radLoad?'<span class="loader"></span>':'SEARCH'}</button>
+          </div>
+          ${S.radSt?`<div style="background:linear-gradient(135deg,rgba(255,204,0,0.1),rgba(255,100,0,0.05));border:1px solid rgba(255,204,0,0.3);border-radius:12px;padding:15px;margin-bottom:15px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:14px;color:#ffcc00;font-family:Orbitron,sans-serif">📻 ${Utils.escape(S.radSt.n)}</div><div style="font-size:11px;color:#607090">${Utils.escape(S.radSt.c)}</div></div>
+            <button id="rad-toggle" style="width:50px;height:50px;border-radius:50%;border:none;background:${S.radPlay?'linear-gradient(135deg,#ff0055,#cc0044)':'linear-gradient(135deg,#00ff88,#00cc66)'};color:#fff;font-size:20px;cursor:pointer">${S.radPlay?'⏸':'▶'}</button>
+          </div>`:''}
+          <div style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px">
+            ${S.radRes.map((s,i)=>`<button class="rad-station cyber-card" data-idx="${i}" style="padding:12px;cursor:pointer;border:none;text-align:left;width:100%">
+              <div style="font-size:11px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">📻 ${Utils.escape(s.n)}</div>
+              <div style="font-size:9px;color:#505060;margin-top:4px">${Utils.escape(s.c)}</div>
+            </button>`).join('')}
+          </div>
+        </div>`;
+      },
+      
+      renderTerminalApp(hdr, m) {
+        const S = this.state;
+        return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden;background:rgba(0,5,0,0.85)">
+          ${hdr('⌨️','Terminal')}
+          <div id="term-output" style="flex:1;overflow-y:auto;font-family:JetBrains Mono,monospace;font-size:12px;line-height:1.6">
+            ${S.termLn.map(l=>`<div style="color:${l.startsWith('>')?'#00f0ff':l.startsWith('[')?'#00ff88':'#00ff00'};margin-bottom:4px">${Utils.escape(l)}</div>`).join('')}
+          </div>
+          <div style="display:flex;gap:10px;margin-top:10px;align-items:center">
+            <span style="color:#00ff88;font-family:JetBrains Mono,monospace">$</span>
+            <input id="term-input" placeholder="Type command..." style="flex:1;background:transparent;border:none;color:#00ff88;font-family:JetBrains Mono,monospace;font-size:13px;outline:none">
+          </div>
+        </div>`;
+      },
+      
+      renderIDEApp(hdr, m) {
+        const S = this.state;
+        return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden">
+          ${hdr('💻','IDE')}
+          <button id="ide-run" class="cyber-btn" style="background:linear-gradient(135deg,#ff00aa,#8b00ff);color:#fff;width:fit-content;margin-bottom:15px">▶ RUN CODE</button>
+          <div style="flex:1;display:flex;gap:15px;flex-direction:${m?'column':'row'}">
+            <div style="flex:1;display:flex;flex-direction:column;min-height:180px">
+              <div style="padding:8px 12px;background:rgba(0,240,255,0.1);border-radius:8px 8px 0 0;font-size:10px;color:#607090;font-family:Orbitron,sans-serif;border:1px solid rgba(0,240,255,0.2);border-bottom:none">📝 CODE</div>
+              <textarea id="ide-code" style="flex:1;background:rgba(0,5,15,0.8);border:1px solid rgba(0,240,255,0.2);border-radius:0 0 8px 8px;padding:12px;color:#00ff88;font-family:JetBrains Mono,monospace;font-size:12px;resize:none;outline:none">${Utils.escape(S.ideCode)}</textarea>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;min-height:180px">
+              <div style="padding:8px 12px;background:rgba(255,0,170,0.1);border-radius:8px 8px 0 0;font-size:10px;color:#607090;font-family:Orbitron,sans-serif;border:1px solid rgba(255,0,170,0.2);border-bottom:none">🖥️ PREVIEW</div>
+              <iframe id="ide-preview" style="flex:1;background:#fff;border-radius:0 0 8px 8px;border:1px solid rgba(255,0,170,0.2)" sandbox="allow-scripts"></iframe>
+            </div>
+          </div>
+        </div>`;
+      },
+      
+      renderArtApp(hdr, m) {
+        const S = this.state;
+        return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden">
+          ${hdr('🎨','Art Studio')}
+          <textarea id="art-input" placeholder="Describe your image... (e.g., 'cyberpunk city with neon lights')" class="cyber-input" style="height:80px;resize:none;margin-bottom:10px" ${S.artLoad?'disabled':''}></textarea>
+          <button id="art-gen" class="cyber-btn" style="background:${S.artLoad?'#405060':'linear-gradient(135deg,#ff00aa,#8b00ff)'};color:${S.artLoad?'#888':'#fff'};margin-bottom:15px;width:fit-content" ${S.artLoad?'disabled':''}>${S.artLoad?'<span class="loader"></span> GENERATING...':'🎨 GENERATE IMAGE'}</button>
+          <div style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;align-content:start">
+            ${S.artImgs.map((img,i)=>`<button class="art-img cyber-card" data-idx="${i}" style="padding:0;border:2px solid rgba(255,0,170,0.3)"><img src="${Utils.escape(img.u)}" style="aspect-ratio:1;border-radius:14px;object-fit:cover;width:100%" loading="lazy"></button>`).join('')}
+          </div>
+        </div>`;
+      },
+      
+      renderGamesApp(hdr, m) {
+        const S = this.state;
+        if (!S.gameType) {
+          return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden">
+            ${hdr('🎮','Games Center')}
+            <div style="flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:15px;align-content:start;padding:10px">
+              <button class="game-select cyber-card" data-game="snake" style="padding:25px;text-align:center;cursor:pointer;border:none">
+                <div style="font-size:48px;margin-bottom:10px">🐍</div><div style="font-family:Orbitron,sans-serif;font-size:12px;color:#00ff88">SNAKE</div><div style="font-size:10px;color:#505060;margin-top:5px">Classic arcade</div>
+              </button>
+              <button class="game-select cyber-card" data-game="memory" style="padding:25px;text-align:center;cursor:pointer;border:none">
+                <div style="font-size:48px;margin-bottom:10px">🧠</div><div style="font-family:Orbitron,sans-serif;font-size:12px;color:#ff00aa">MEMORY</div><div style="font-size:10px;color:#505060;margin-top:5px">Match pairs</div>
+              </button>
+            </div>
+          </div>`;
+        }
+        
+        if (S.gameType === 'snake') {
+          let cells = '';
+          for (let y = 0; y < 15; y++) {
+            for (let x = 0; x < 15; x++) {
+              const isHead = S.snake.body[0][0] === x && S.snake.body[0][1] === y;
+              const isBody = S.snake.body.slice(1).some(b => b[0] === x && b[1] === y);
+              const isFood = S.snake.food[0] === x && S.snake.food[1] === y;
+              cells += `<div style="width:20px;height:20px;background:${isHead?'#00ff88':isBody?'#00cc66':isFood?'#ff0055':'rgba(0,50,0,0.5)'};border-radius:${isHead||isFood?'50%':'3px'};transition:background 0.1s"></div>`;
+            }
+          }
+          return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:15px;margin-bottom:15px">
+              <button class="back-btn game-back">← Back</button><span style="font-size:24px">🐍</span><span style="font-family:Orbitron,sans-serif;font-size:14px;color:#fff">SNAKE</span>
+              <span style="margin-left:auto;font-family:Orbitron,sans-serif;color:#00ff88">SCORE: ${S.snake.score}</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div id="snake-grid" style="display:grid;grid-template-columns:repeat(15,20px);grid-template-rows:repeat(15,20px);gap:1px;background:rgba(0,20,0,0.8);padding:10px;border-radius:12px;border:2px solid rgba(0,255,136,0.3)">${cells}</div>
+              ${S.snake.over?'<div style="margin-top:20px;font-family:Orbitron,sans-serif;font-size:24px;color:#ff0055">GAME OVER</div><button id="snake-restart" class="cyber-btn" style="margin-top:15px;background:linear-gradient(135deg,#00ff88,#00f0ff);color:#000">PLAY AGAIN</button>':''}
+            </div>
+            <div style="display:flex;justify-content:center;gap:10px;margin-top:15px">
+              <button class="snake-dir cyber-btn" data-dir="up" style="padding:15px 20px;background:rgba(0,255,136,0.2);color:#00ff88">↑</button>
+            </div>
+            <div style="display:flex;justify-content:center;gap:10px">
+              <button class="snake-dir cyber-btn" data-dir="left" style="padding:15px 20px;background:rgba(0,255,136,0.2);color:#00ff88">←</button>
+              <button class="snake-dir cyber-btn" data-dir="down" style="padding:15px 20px;background:rgba(0,255,136,0.2);color:#00ff88">↓</button>
+              <button class="snake-dir cyber-btn" data-dir="right" style="padding:15px 20px;background:rgba(0,255,136,0.2);color:#00ff88">→</button>
+            </div>
+          </div>`;
+        }
+        
+        if (S.gameType === 'memory') {
+          const emojis = ['🎮', '🎯', '🎲', '🎰', '🎪', '🎨', '🎭', '🎪'];
+          let cards = '';
+          for (let i = 0; i < 16; i++) {
+            const isFlipped = S.memory.flipped.includes(i) || S.memory.matched.includes(i);
+            const isMatched = S.memory.matched.includes(i);
+            cards += `<button class="memory-card" data-idx="${i}" style="width:70px;height:70px;background:${isMatched?'rgba(0,255,136,0.3)':isFlipped?'rgba(139,0,255,0.3)':'rgba(0,240,255,0.1)'};border:2px solid ${isMatched?'rgba(0,255,136,0.5)':isFlipped?'rgba(139,0,255,0.5)':'rgba(0,240,255,0.2)'};border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:${isMatched?'default':'pointer'};transition:all 0.2s" ${isMatched?'disabled':''}>${isFlipped?emojis[S.memory.cards[i]%8]:'?'}</button>`;
+          }
+          return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;display:flex;flex-direction:column;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:15px;margin-bottom:15px">
+              <button class="back-btn game-back">← Back</button><span style="font-size:24px">🧠</span><span style="font-family:Orbitron,sans-serif;font-size:14px;color:#fff">MEMORY</span>
+              <span style="margin-left:auto;font-family:Orbitron,sans-serif;color:#ff00aa">MOVES: ${S.memory.moves}</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto">
+              <div id="memory-grid" style="display:grid;grid-template-columns:repeat(4,70px);grid-template-rows:repeat(4,70px);gap:8px">${cards}</div>
+              ${S.memory.done?'<div style="margin-top:20px;font-family:Orbitron,sans-serif;font-size:20px;color:#00ff88">🎉 YOU WIN!</div><button id="memory-restart" class="cyber-btn" style="margin-top:15px;background:linear-gradient(135deg,#ff00aa,#8b00ff);color:#fff">PLAY AGAIN</button>':''}
+            </div>
+          </div>`;
+        }
+        
+        return '<div style="text-align:center;padding:50px;color:#405060">Select a game</div>';
+      },
+      
+      renderToolsApp(hdr, m) {
+        const S = this.state;
+        const tools = [{n:'Node.js',i:'🟢',v:'20.10'},{n:'Python',i:'🐍',v:'3.12'},{n:'Java',i:'☕',v:'21.0'},{n:'Rust',i:'🦀',v:'1.75'},{n:'Go',i:'🐹',v:'1.21'},{n:'Docker',i:'🐳',v:'24.0'}];
+        return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;overflow-y:auto">
+          ${hdr('🛠️','System Tools')}
+          ${S.toolInst?`<div style="background:rgba(0,0,0,0.4);border-radius:12px;padding:15px;margin-bottom:15px;border:1px solid rgba(136,85,255,0.2)">
+            <div style="margin-bottom:10px;color:#fff">Installing ${Utils.escape(S.toolInst)}...</div>
+            <div style="height:6px;background:rgba(136,85,255,0.1);border-radius:3px;overflow:hidden"><div style="width:${S.toolProg}%;height:100%;background:linear-gradient(90deg,#8855ff,#00f0ff);transition:width 0.2s"></div></div>
+          </div>`:''}
+          <div style="display:grid;gap:10px">${tools.map(t=>`<div class="cyber-card" style="padding:15px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:15px"><span style="font-size:28px">${t.i}</span><div><div style="color:#fff;font-size:14px">${Utils.escape(t.n)}</div><div style="font-size:10px;color:#405060">v${t.v}</div></div></div>
+            <button class="tool-install cyber-btn" data-tool="${t.n}" style="background:linear-gradient(135deg,#8855ff,#00f0ff);color:#fff;padding:8px 16px;font-size:10px" ${S.toolInst?'disabled':''}>INSTALL</button>
+          </div>`).join('')}</div>
+        </div>`;
+      },
+      
+      renderSettingsApp(hdr, m) {
+        const S = this.state;
+        return `<div class="cyber-card neon-border" style="height:calc(100vh - 160px);padding:15px;overflow-y:auto">
+          ${hdr('⚙️','Settings')}
+          <div style="background:rgba(0,0,0,0.4);border-radius:12px;padding:20px;margin-bottom:15px;border:1px solid rgba(0,240,255,0.1)">
+            <div style="font-family:Orbitron,sans-serif;font-size:11px;color:#00f0ff;margin-bottom:15px;letter-spacing:2px">SYSTEM INFO</div>
+            <div style="font-size:13px;color:#8090a0;line-height:2">
+              <div>Version: <span style="color:#00f0ff">V15.0 Cyberpunk</span></div>
+              <div>User: <span style="color:#fff">${Utils.escape(S.user?.displayName||'Guest')}</span></div>
+              <div>Role: <span style="color:${S.user?.role==='admin'?'#ff00aa':'#00f0ff'}">${Utils.escape(S.user?.role||'guest')}</span></div>
+              <div>Network: <span style="color:${S.online?'#00ff88':'#ff0055'}">${S.online?'Online':'Offline'}</span></div>
+            </div>
+          </div>
+          <div style="background:rgba(0,0,0,0.4);border-radius:12px;padding:20px;border:1px solid rgba(139,0,255,0.1)">
+            <div style="font-family:Orbitron,sans-serif;font-size:11px;color:#8b00ff;margin-bottom:15px;letter-spacing:2px">FEATURES</div>
+            <div style="font-size:13px;color:#8090a0;line-height:2">
+              <div>🤖 Smart AI Assistant</div><div>💡 Context-Aware Copilot</div><div>🔧 Real-time Build Console</div>
+              <div>📻 30,000+ Radio Stations</div><div>💻 IDE with Live Preview</div><div>🎨 AI Image Generation</div><div>🎮 Arcade Games</div>
+            </div>
+          </div>
+          <div style="margin-top:15px"><button id="clear-storage" class="cyber-btn" style="background:rgba(255,0,85,0.2);color:#ff0055;border:1px solid rgba(255,0,85,0.3)">🗑️ Clear Local Data</button></div>
+        </div>`;
+      },
+      
+      renderCopilot() {
+        const S = this.state;
+        return `<div class="glass" style="width:320px;border-left:1px solid rgba(139,0,255,0.3);display:flex;flex-direction:column">
+          <div style="padding:12px;background:linear-gradient(135deg,rgba(139,0,255,0.1),rgba(255,0,170,0.1));border-bottom:1px solid rgba(139,0,255,0.2);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-family:Orbitron,sans-serif;font-size:10px;color:#ff00aa;letter-spacing:2px">💡 AI COPILOT</span>
+            <button id="cop-close" style="width:24px;height:24px;background:rgba(255,0,85,0.2);border:none;border-radius:6px;color:#ff0055;cursor:pointer;font-size:12px">✕</button>
+          </div>
+          <div id="cop-messages" style="flex:1;overflow-y:auto;padding:12px">
+            ${S.copMsgs.length===0?'<div style="text-align:center;padding:20px;color:#405060;font-size:12px">Ask me anything!</div>':''}
+            ${S.copMsgs.map(msg=>`<div style="margin-bottom:12px">
+              <div style="font-size:9px;color:${msg.r==='user'?'#00f0ff':'#ff00aa'};margin-bottom:6px;font-family:Orbitron,sans-serif">${msg.r==='user'?'👤 YOU':'💡 COPILOT'}</div>
+              <div style="background:rgba(${msg.r==='user'?'0,240,255':'139,0,255'},0.1);border-radius:10px;padding:10px 14px;font-size:12px;white-space:pre-wrap;border:1px solid rgba(${msg.r==='user'?'0,240,255':'139,0,255'},0.15)">${Utils.escape(msg.c)}</div>
+            </div>`).join('')}
+            ${S.copLoad?'<div style="text-align:center;color:#607090;padding:10px"><span class="pulse">💡</span> Thinking...</div>':''}
+          </div>
+          <div style="padding:12px;border-top:1px solid rgba(139,0,255,0.2)">
+            <div style="display:flex;gap:8px">
+              <input id="cop-input" placeholder="Ask..." class="cyber-input" style="flex:1;padding:10px 14px;font-size:12px" ${S.copLoad?'disabled':''}>
+              <button id="cop-send" class="glow cyber-btn" style="padding:10px 14px;background:linear-gradient(135deg,#ff00aa,#8b00ff);color:#fff" ${S.copLoad?'disabled':''}>💡</button>
+            </div>
+          </div>
+        </div>`;
+      },
+      
+      // Core Functions
+      async askAI(msgs, sys) {
+        try {
+          if (window.puter?.ai?.chat) {
+            const res = await window.puter.ai.chat(
+              [{ role: 'system', content: sys || 'You are NEXUS AI. Be helpful and concise.' }, ...msgs],
+              { model: 'gpt-4o-mini' }
+            );
+            return typeof res === 'string' ? res : res.message?.content || 'Done.';
+          }
+          return 'AI loading... Please wait and try again.';
+        } catch (e) {
+          console.error('[AI] Error:', e);
+          return 'AI temporarily unavailable. Please try again.';
+        }
+      },
+      
+      async login(username, password) {
+        const user = AuthManager.validate(username, password);
+        if (user) {
+          this.state.user = user;
+          this.state.phase = 'desktop';
+          this.state.aiMsgs = [{ r: 'assistant', c: `👋 Welcome, ${user.displayName}!` }];
+          Storage.save(this.state);
+          this.notify(`Welcome, ${user.displayName}!`);
+          this.render();
+          return true;
+        }
+        this.notify('⚠️ Invalid credentials');
+        return false;
+      },
+      
+      guestLogin() {
+        this.state.user = AuthManager.createGuestUser();
+        this.state.phase = 'desktop';
+        this.notify('👋 Welcome!');
+        this.render();
+      },
+      
+      logout() {
+        Storage.clear();
+        AudioManager.stop();
+        GameManager.cleanup();
+        this.state.user = null;
+        this.state.phase = 'login';
+        this.state.app = null;
+        this.state.copOpen = false;
+        this.render();
+      },
+      
+      openApp(id) {
+        this.cleanupAppResources();
+        this.state.app = id;
+        this.render();
+      },
+      
+      closeApp() {
+        this.cleanupAppResources();
+        this.state.app = null;
+        this.state.copOpen = false;
+        this.render();
+      },
+      
+      cleanupAppResources() {
+        if (this.state.app === 'rad') { AudioManager.stop(); this.state.radPlay = false; }
+        if (this.state.gameType) { GameManager.cleanup(); this.state.gameType = null; }
+      },
+      
+      toggleCopilot() {
+        this.state.copOpen = !this.state.copOpen;
+        if (this.state.copOpen && this.state.copMsgs.length === 0) {
+          this.state.copMsgs = [{ r: 'assistant', c: '💡 Hi! I\'m your NEXUS Copilot.\n\nI can help with:\n• Code & debugging\n• Terminal commands\n• Build & deploy\n\nWhat do you need?' }];
+        }
+        this.render();
+      },
+      
+      // AI Chat
+      async sendAIMessage() {
+        const input = document.getElementById('ai-input');
+        const msg = Utils.sanitize(input?.value);
+        if (!msg || this.state.aiLoad) return;
+        this.state.aiMsgs.push({ r: 'user', c: msg });
+        input.value = '';
+        this.state.aiLoad = true;
+        this.render();
+        const resp = await this.askAI(this.state.aiMsgs.slice(-10));
+        this.state.aiMsgs.push({ r: 'assistant', c: resp });
+        this.state.aiLoad = false;
+        Storage.save(this.state);
+        this.render();
+      },
+      
+      // Copilot
+      async sendCopilotMessage() {
+        const input = document.getElementById('cop-input');
+        const msg = Utils.sanitize(input?.value);
+        if (!msg || this.state.copLoad) return;
+        input.value = '';
+        this.state.copMsgs.push({ r: 'user', c: msg });
+        this.state.copLoad = true;
+        this.render();
+        const ctx = this.state.app ? `User is in ${this.state.app} app.` : 'User is on desktop.';
+        const resp = await this.askAI(this.state.copMsgs.slice(-6), `You are NEXUS Copilot. ${ctx}`);
+        this.state.copMsgs.push({ r: 'assistant', c: resp });
+        this.state.copLoad = false;
+        this.render();
+      },
+      
+      // YouTube
+      async searchYouTube() {
+        const input = document.getElementById('yt-input');
+        const q = Utils.sanitize(input?.value);
+        if (!q || this.state.ytLoad) return;
+        this.state.ytLoad = true;
+        this.render();
+        try {
+          const res = await fetch(`https://inv.nadeko.net/api/v1/search?q=${encodeURIComponent(q)}&type=video`);
+          const data = await res.json();
+          this.state.ytRes = (data || []).slice(0, 8).map(v => ({ id: v.videoId, ti: v.title, t: `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg` }));
+        } catch (e) { this.state.ytRes = []; this.notify('⚠️ Search failed'); }
+        this.state.ytLoad = false;
+        this.render();
+      },
+      
+      playYouTube(id) { this.state.ytVid = id; this.render(); },
+      
+      // Build
+      runBuild() {
+        if (this.state.bldStat === 'building') return;
+        this.state.bldStat = 'building';
+        this.state.bldP = 0;
+        this.state.bldLog = ['[BUILD] Starting...'];
+        this.render();
+        const steps = [{p:15,l:'[BUILD] Resolving dependencies...'},{p:30,l:'[BUILD] Installing packages...'},{p:45,l:'✓ Packages ready'},{p:60,l:'[BUILD] Compiling source...'},{p:75,l:'[BUILD] Optimizing assets...'},{p:90,l:'[BUILD] Generating build...'},{p:100,l:'✅ Build complete!'}];
+        let i = 0;
+        const run = () => {
+          if (i < steps.length) { this.state.bldP = steps[i].p; this.state.bldLog.push(steps[i].l); i++; this.render(); setTimeout(run, 300); }
+          else { this.state.bldStat = 'success'; this.notify('✅ Build successful!'); this.render(); }
+        };
+        run();
+      },
+      
+      // Radio
+      async searchRadio() {
+        const input = document.getElementById('rad-input');
+        const q = Utils.sanitize(input?.value);
+        if (!q || this.state.radLoad) return;
+        this.state.radLoad = true;
+        this.render();
+        try {
+          const res = await fetch(`https://de1.api.radio-browser.info/json/stations/search?name=${encodeURIComponent(q)}&limit=12`, { headers: { 'User-Agent': 'NEXUS-OS-V15.0' } });
+          const data = await res.json();
+          this.state.radRes = (data || []).map(s => ({ n: s.name, u: s.url_resolved || s.url, c: s.country || 'Unknown' })).filter(s => s.u);
+        } catch (e) { this.state.radRes = []; this.notify('⚠️ Search failed'); }
+        this.state.radLoad = false;
+        this.render();
+      },
+      
+      async playRadio(idx) {
+        const st = this.state.radRes[idx];
+        if (!st) return;
+        const success = await AudioManager.play(st.u);
+        if (success) { this.state.radSt = st; this.state.radPlay = true; }
+        else { this.state.radPlay = false; this.notify('⚠️ Cannot play this station'); }
+        this.render();
+      },
+      
+      toggleRadio() { AudioManager.toggle(); this.state.radPlay = AudioManager.isPlaying; this.render(); },
+      
+      // Terminal
+      runTerminalCommand(cmd) {
+        const cmds = {
+          help: () => ['Commands: help, clear, date, whoami, build, version, neofetch'],
+          clear: () => { this.state.termLn = []; return []; },
+          date: () => [new Date().toString()],
+          whoami: () => [this.state.user?.username || 'guest'],
+          version: () => ['NEXUS OS V15.0 Cyberpunk'],
+          neofetch: () => ['╔══════════════════════╗','║   NEXUS OS V15.0     ║','║   CYBERPUNK ED.      ║','║   Single File Ver.   ║','╚══════════════════════╝']
+        };
+        const cmdLower = cmd?.toLowerCase().trim() || '';
+        if (cmdLower === 'build') { this.openApp('bld'); this.runBuild(); }
+        const out = cmds[cmdLower]?.() || [`[ERROR] Unknown command: ${cmd}`, 'Type "help" for available commands.'];
+        this.state.termLn.push(`> ${cmd}`, ...out, '');
+        this.render();
+      },
+      
+      // IDE
+      runIDE() {
+        const code = document.getElementById('ide-code')?.value || this.state.ideCode;
+        this.state.ideCode = code;
+        Storage.save(this.state);
+        const iframe = document.getElementById('ide-preview');
+        if (iframe) {
+          iframe.srcdoc = `<!DOCTYPE html><html><head><style>*{margin:0;padding:0;font-family:system-ui}body{background:#0a0a1a;color:#00f0ff;padding:20px}</style></head><body><script>try{${code.replace(/<\/script>/g, '<\\/script>')}}catch(e){document.body.innerHTML='<div style="color:#ff0055;padding:20px;font-family:monospace">Error: '+e.message+'</div>'}<\/script></body></html>`;
+        }
+        this.notify('▶️ Code executed!');
+      },
+      
+      // Art
+      async generateArt() {
+        const input = document.getElementById('art-input');
+        const prompt = Utils.sanitize(input?.value);
+        if (!prompt || this.state.artLoad) return;
+        this.state.artLoad = true;
+        this.render();
+        try {
+          if (window.puter?.ai?.txt2img) {
+            const res = await window.puter.ai.txt2img(prompt + ', digital art, cyberpunk style');
+            const url = typeof res === 'string' ? res : res.url || res.image;
+            if (url) { this.state.artImgs.unshift({ u: url, prompt }); this.notify('🎨 Image created!'); }
+          } else { this.notify('⚠️ AI not loaded yet.'); }
+        } catch (e) { this.notify('⚠️ Generation failed'); }
+        this.state.artLoad = false;
+        this.render();
+      },
+      
+      // Tools
+      installTool(name) {
+        this.state.toolInst = name;
+        this.state.toolProg = 0;
+        this.render();
+        let p = 0;
+        const run = () => {
+          if (p <= 100) { this.state.toolProg = p; p += 20; this.render(); setTimeout(run, 200); }
+          else { this.state.toolInst = null; this.notify(`✅ ${name} installed!`); this.render(); }
+        };
+        run();
+      },
+      
+      // Games
+      selectGame(type) {
+        this.state.gameType = type;
+        if (type === 'snake') this.startSnake();
+        else if (type === 'memory') this.startMemory();
+        this.render();
+      },
+      
+      exitGame() { GameManager.cleanup(); this.state.gameType = null; this.render(); },
+      
+      startSnake() {
+        GameManager.cleanup();
+        this.state.snake = { body: [[7, 7]], dir: [1, 0], food: [Math.floor(Math.random() * 15), Math.floor(Math.random() * 15)], score: 0, over: false };
+        GameManager.setInterval('snake', () => {
+          if (this.state.gameType !== 'snake' || this.state.snake.over) return;
+          const S = this.state.snake;
+          const head = [S.body[0][0] + S.dir[0], S.body[0][1] + S.dir[1]];
+          if (head[0] < 0 || head[0] >= 15 || head[1] < 0 || head[1] >= 15 || S.body.some(b => b[0] === head[0] && b[1] === head[1])) {
+            S.over = true; GameManager.clearInterval('snake'); this.render(); return;
+          }
+          const newBody = [head, ...S.body];
+          if (head[0] === S.food[0] && head[1] === S.food[1]) { S.score += 10; S.food = [Math.floor(Math.random() * 15), Math.floor(Math.random() * 15)]; }
+          else newBody.pop();
+          S.body = newBody;
+          this.render();
+        }, 150);
+      },
+      
+      changeSnakeDirection(dir) {
+        const S = this.state.snake;
+        if (S.over) return;
+        const dirs = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+        const newDir = dirs[dir];
+        if (newDir && !(newDir[0] === -S.dir[0] && newDir[1] === -S.dir[1])) S.dir = newDir;
+      },
+      
+      startMemory() {
+        GameManager.cleanup();
+        const cards = [];
+        for (let i = 0; i < 8; i++) { cards.push(i, i); }
+        for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+        this.state.memory = { cards, flipped: [], matched: [], moves: 0, done: false };
+      },
+      
+      flipMemoryCard(idx) {
+        const M = this.state.memory;
+        if (M.done || M.flipped.includes(idx) || M.matched.includes(idx) || M.flipped.length >= 2) return;
+        M.flipped.push(idx);
+        M.moves++;
+        this.render();
+        if (M.flipped.length === 2) {
+          const [a, b] = M.flipped;
+          if (M.cards[a] === M.cards[b]) {
+            M.matched.push(a, b);
+            M.flipped = [];
+            if (M.matched.length === 16) M.done = true;
+            this.render();
+          } else {
+            setTimeout(() => { M.flipped = []; this.render(); }, 800);
+          }
+        }
+      },
+      
+      // Events
+      setupEvents() {
+        // Touch handling
+        let touchStartX = 0, touchStartY = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+          if (this.state.gameType !== 'snake' || this.state.snake.over) return;
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          const dy = e.changedTouches[0].clientY - touchStartY;
+          const minSwipe = 30;
+          if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > minSwipe) this.changeSnakeDirection(dx > 0 ? 'right' : 'left');
+          else if (Math.abs(dy) > minSwipe) this.changeSnakeDirection(dy > 0 ? 'down' : 'up');
+        }, { passive: true });
+        
+        // Click delegation
+        document.addEventListener('click', (e) => {
+          const target = e.target;
+          if (target.id === 'guest-btn') { this.guestLogin(); return; }
+          if (target.id === 'logout-btn') { this.logout(); return; }
+          if (target.id === 'clear-storage') { Storage.clear(); this.notify('🗑️ Local data cleared'); return; }
+          
+          const appCard = target.closest('.app-card');
+          if (appCard) { this.openApp(appCard.dataset.app); return; }
+          if (target.id === 'back-btn') { this.closeApp(); return; }
+          if (target.id === 'copilot-toggle') { this.toggleCopilot(); return; }
+          if (target.id === 'cop-close') { this.toggleCopilot(); return; }
+          if (target.id === 'ai-send') { this.sendAIMessage(); return; }
+          if (target.id === 'yt-search') { this.searchYouTube(); return; }
+          const ytVideo = target.closest('.yt-video');
+          if (ytVideo) { this.playYouTube(ytVideo.dataset.vid); return; }
+          if (target.id === 'build-run') { this.runBuild(); return; }
+          if (target.id === 'rad-search') { this.searchRadio(); return; }
+          if (target.id === 'rad-toggle') { this.toggleRadio(); return; }
+          const radStation = target.closest('.rad-station');
+          if (radStation) { this.playRadio(parseInt(radStation.dataset.idx)); return; }
+          if (target.id === 'ide-run') { this.runIDE(); return; }
+          if (target.id === 'art-gen') { this.generateArt(); return; }
+          const artImg = target.closest('.art-img');
+          if (artImg) { const url = this.state.artImgs[parseInt(artImg.dataset.idx)]?.u; if (url) window.open(url, '_blank'); return; }
+          const toolBtn = target.closest('.tool-install');
+          if (toolBtn) { this.installTool(toolBtn.dataset.tool); return; }
+          if (target.id === 'cop-send') { this.sendCopilotMessage(); return; }
+          const gameSelect = target.closest('.game-select');
+          if (gameSelect) { this.selectGame(gameSelect.dataset.game); return; }
+          const gameBack = target.closest('.game-back');
+          if (gameBack) { this.exitGame(); return; }
+          if (target.id === 'snake-restart') { this.startSnake(); this.render(); return; }
+          const snakeDir = target.closest('.snake-dir');
+          if (snakeDir) { this.changeSnakeDirection(snakeDir.dataset.dir); return; }
+          const memoryCard = target.closest('.memory-card');
+          if (memoryCard && !memoryCard.disabled) { this.flipMemoryCard(parseInt(memoryCard.dataset.idx)); return; }
+          if (target.id === 'memory-restart') { this.startMemory(); this.render(); return; }
+        });
+        
+        // Form submissions
+        document.addEventListener('submit', (e) => {
+          if (e.target.id === 'login-form') {
+            e.preventDefault();
+            const form = new FormData(e.target);
+            this.login(form.get('username'), form.get('password'));
+          }
+        });
+        
+        // Key handlers
+        document.addEventListener('keydown', (e) => {
+          if (this.state.gameType === 'snake' && !this.state.snake.over) {
+            const keyMap = { 'ArrowUp': 'up', 'w': 'up', 'W': 'up', 'ArrowDown': 'down', 's': 'down', 'S': 'down', 'ArrowLeft': 'left', 'a': 'left', 'A': 'left', 'ArrowRight': 'right', 'd': 'right', 'D': 'right' };
+            if (keyMap[e.key]) { e.preventDefault(); this.changeSnakeDirection(keyMap[e.key]); return; }
+          }
+          if (e.key === 'Enter') {
+            const id = document.activeElement?.id;
+            if (id === 'ai-input') this.sendAIMessage();
+            else if (id === 'yt-input') this.searchYouTube();
+            else if (id === 'rad-input') this.searchRadio();
+            else if (id === 'term-input') { this.runTerminalCommand(document.activeElement.value); document.activeElement.value = ''; }
+            else if (id === 'cop-input') this.sendCopilotMessage();
+            else if (id === 'art-input') this.generateArt();
+          }
+        });
+        
+        // Network status
+        window.addEventListener('online', () => { this.state.online = true; this.notify('🌐 Connection restored'); this.render(); });
+        window.addEventListener('offline', () => { this.state.online = false; this.notify('⚠️ Connection lost'); this.render(); });
+        
+        // Visibility change
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden && this.state.gameType === 'snake' && !this.state.snake.over) GameManager.clearInterval('snake');
+          else if (!document.hidden && this.state.gameType === 'snake' && !this.state.snake.over) {
+            GameManager.setInterval('snake', () => {
+              if (this.state.gameType !== 'snake' || this.state.snake.over) return;
+              const S = this.state.snake;
+              const head = [S.body[0][0] + S.dir[0], S.body[0][1] + S.dir[1]];
+              if (head[0] < 0 || head[0] >= 15 || head[1] < 0 || head[1] >= 15 || S.body.some(b => b[0] === head[0] && b[1] === head[1])) { S.over = true; GameManager.clearInterval('snake'); this.render(); return; }
+              const newBody = [head, ...S.body];
+              if (head[0] === S.food[0] && head[1] === S.food[1]) { S.score += 10; S.food = [Math.floor(Math.random() * 15), Math.floor(Math.random() * 15)]; }
+              else newBody.pop();
+              S.body = newBody;
+              this.render();
+            }, 150);
+          }
+        });
+      },
+      
+      // Boot
+      async boot() {
+        const steps = ['LOADING CORE', 'INITIALIZING AI', 'STARTING SYSTEMS', 'READY'];
+        for (let i = 0; i < steps.length; i++) {
+          this.state.bootP = ((i + 1) / steps.length) * 100;
+          this.state.bootT = steps[i];
+          this.render();
+          await new Promise(r => setTimeout(r, 500));
+        }
+        const saved = Storage.load();
+        if (saved.user) {
+          this.state.user = saved.user;
+          this.state.phase = 'desktop';
+          if (saved.aiMsgs) this.state.aiMsgs = saved.aiMsgs;
+          if (saved.ideCode) this.state.ideCode = saved.ideCode;
+          this.state.aiMsgs.push({ r: 'assistant', c: `👋 Welcome back, ${saved.user.displayName}!` });
+        } else {
+          this.state.phase = 'login';
+        }
+        this.render();
+      },
+      
+      init() {
+        this.initParticles();
+        this.setupEvents();
+        setInterval(() => {
+          this.state.time = new Date().toLocaleTimeString('en-US', { hour12: false });
+          if (this.state.phase === 'desktop') this.render();
+        }, 1000);
+        this.boot();
+      }
+    };
+    
+    // Start
+    App.init();
+  </script>
+</body>
+</html>
