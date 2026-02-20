@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NEXUS OS V16.0 | Ultimate Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://js.puter.com/v2/" async></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      --primary: #8a2be2; --primary-light: #a855f7;
+      --accent: #ec4899; --accent-light: #f472b6;
+      --bg-dark: #050505; --bg-card: rgba(255,255,255,0.03);
+      --glass: rgba(255,255,255,0.05); --glass-border: rgba(255,255,255,0.1);
+      --text-main: #ffffff; --text-muted: #94a3b8;
+      --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+      --cyan: #00f0ff; --magenta: #ff00aa;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-main); }
+    
+    /* Background */
+    #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+    .content-layer { position: relative; z-index: 10; width: 100%; height: 100%; display: flex; flex-direction: column; }
+    
+    /* Boot Screen - V9 Style Refined */
+    .boot-screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; background: var(--bg-dark); }
+    .boot-screen.hidden { display: none; }
+    .boot-logo { font-size: 6rem; font-weight: bold; color: var(--cyan); text-shadow: 0 0 20px var(--cyan); animation: pulse 2s infinite; margin-bottom: 0.5rem; font-family: 'Space Grotesk', sans-serif; }
+    .boot-subtitle { color: var(--magenta); font-size: 0.9rem; letter-spacing: 0.3em; margin-bottom: 3rem; }
+    .boot-terminal { width: 320px; height: 144px; background: rgba(0, 10, 20, 0.9); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 8px; padding: 12px; font-size: 0.75rem; overflow: hidden; margin-bottom: 1rem; }
+    .boot-line { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .boot-line.active { color: var(--cyan); }
+    .boot-line.done { color: var(--success); }
+    .boot-progress { width: 320px; height: 6px; background: rgba(0, 240, 255, 0.1); border-radius: 3px; overflow: hidden; }
+    .boot-progress-bar { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--magenta)); transition: width 0.2s; box-shadow: 0 0 10px var(--cyan); }
+    .boot-percent { text-align: center; font-size: 0.75rem; color: #6b7280; margin-top: 8px; }
+    .skip-btn { margin-top: 1rem; padding: 8px 24px; background: transparent; border: 1px solid var(--cyan); color: var(--cyan); border-radius: 4px; cursor: pointer; font-family: inherit; transition: 0.3s; }
+    .skip-btn:hover { background: rgba(0, 240, 255, 0.1); }
+    .skip-btn.hidden { display: none; }
+
+    /* Auth */
+    .auth-container { display: flex; justify-content: center; align-items: center; height: 100%; padding: 20px; }
+    .auth-card { width: 100%; max-width: 420px; padding: 3rem; background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid var(--glass-border); border-radius: 24px; backdrop-filter: blur(20px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .auth-logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; background: linear-gradient(to right, var(--primary-light), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; text-align: center; }
+    
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-input { width: 100%; padding: 14px 18px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-size: 1rem; transition: all 0.3s; outline: none; }
+    .form-input:focus { border-color: var(--primary-light); box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1); }
+    
+    .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary-light), var(--accent)); color: #fff; box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3); }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-main); }
+    .btn-small { padding: 8px 16px; font-size: 0.8rem; width: auto; }
+    
+    /* App Layout */
+    .app-shell { display: flex; height: 100%; overflow: hidden; }
+    .sidebar { width: 260px; background: rgba(0,0,0,0.6); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 1.5rem; overflow-y: auto; flex-shrink: 0; z-index: 50; transition: transform 0.3s; }
+    .sidebar-header { margin-bottom: 2rem; }
+    .brand { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: #fff; }
+    
+    .nav-menu { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; }
+    .nav-section-title { font-size: 0.7rem; color: var(--text-muted); margin-top: 1.5rem; margin-bottom: 0.5rem; padding-left: 0.5rem; text-transform: uppercase; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 8px; color: var(--text-muted); transition: all 0.2s; cursor: pointer; font-size: 0.9rem; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .nav-item.active { background: rgba(168, 85, 247, 0.15); color: var(--primary-light); border-left: 3px solid var(--primary-light); }
+    
+    .user-profile { padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; margin-top: auto; }
+    .user-info { display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: rgba(0,0,0,0.2); position: relative; }
+    .topbar { height: 60px; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; flex-shrink: 0; z-index: 10; }
+    .topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .page-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 600; }
+    .page-container { flex: 1; padding: 1.5rem; overflow-y: auto; scroll-behavior: smooth; }
+    
+    /* Dashboard Widgets */
+    .network-bars { display: flex; align-items: flex-end; gap: 4px; height: 60px; margin-bottom: 1rem; }
+    .network-bar { flex: 1; border-radius: 2px 2px 0 2px; background: linear-gradient(to top, var(--cyan), var(--magenta)); transition: height 0.2s; }
+    
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { padding: 1.5rem; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; transition: 0.3s; }
+    .stat-card:hover { transform: translateY(-2px); border-color: var(--primary-light); }
+    .stat-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.5rem; font-weight: bold; font-family: 'Space Grotesk', sans-serif; }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+    
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .feature-card { padding: 1.5rem; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; }
+    .feature-title { font-weight: 600; margin-bottom: 0.5rem; }
+    
+    /* Utilities */
+    .glass-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; }
+    .hidden { display: none !important; }
+    .text-gradient { background: linear-gradient(to right, var(--primary-light), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    /* Chat, Art, IDE, etc styles inherited from V15 polish */
+    .chat-layout { display: flex; gap: 1.5rem; height: calc(100% - 1rem); }
+    .chat-main { flex: 1; display: flex; flex-direction: column; background: var(--glass); border-radius: 16px; overflow: hidden; }
+    .chat-messages { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+    .msg { max-width: 75%; padding: 0.8rem 1.1rem; border-radius: 12px; font-size: 0.9rem; line-height: 1.4; word-wrap: break-word; }
+    .msg-in { background: rgba(255,255,255,0.05); align-self: flex-start; }
+    .msg-out { background: linear-gradient(135deg, var(--primary), var(--accent)); align-self: flex-end; }
+    .msg-ai { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); align-self: center; font-size: 0.85rem; color: var(--success); max-width: 90%; text-align: center; font-style: italic; }
+    .chat-input-area { padding: 1rem; border-top: 1px solid var(--glass-border); display: flex; gap: 0.8rem; background: rgba(0,0,0,0.2); }
+    .chat-input { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0 1rem; color: #fff; font-size: 0.9rem; }
+    
+    .studio-grid { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; height: 100%; }
+    .prompt-box { height: 100px; resize: none; background: rgba(0,0,0,0.4); border-radius: 8px; padding: 0.8rem; color: #fff; border: 1px solid var(--glass-border); outline: none; width: 100%; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; align-content: start; }
+    .gallery-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .gallery-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); opacity: 0; transition: opacity 0.3s; display: flex; align-items: flex-end; padding: 0.5rem; justify-content: center; }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    
+    .ide-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; height: 400px; }
+    .ide-editor { width: 100%; height: 100%; background: #000; border-radius: 8px; padding: 1rem; color: var(--success); font-family: monospace; border: 1px solid var(--glass-border); resize: none; outline: none; }
+    .ide-preview { width: 100%; height: 100%; border-radius: 8px; border: none; background: #fff; }
+    
+    .terminal-body { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 1rem; height: 300px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.85rem; color: var(--success); white-space: pre-wrap; }
+    .terminal-input { background: transparent; border: none; color: var(--primary-light); font-family: inherit; width: 70%; outline: none; }
+    
+    .weather-main { display: flex; align-items: center; gap: 20px; margin-bottom: 1.5rem; }
+    .weather-icon { font-size: 3rem; }
+    .weather-temp { font-size: 2.5rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+    
+    .station-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem; max-height: 300px; overflow-y: auto; }
+    .station-item { background: rgba(255,255,255,0.03); padding: 0.8rem; border-radius: 8px; cursor: pointer; border: 1px solid transparent; }
+    .station-item:hover { border-color: var(--primary-light); }
+    
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th { text-align: left; padding: 0.8rem; border-bottom: 1px solid var(--glass-border); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
+    .admin-table td { padding: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.9rem; }
+    .status-badge { padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
+    .status-active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .status-banned { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    
+    /* Game Styles */
+    .game-canvas-container { position: relative; background: linear-gradient(135deg, #0a0a0a, #1a1a2e); border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); }
+    .game-canvas { width: 100%; display: block; }
+    .game-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: rgba(0, 20, 40, 0.8); border-bottom: 1px solid rgba(0, 240, 255, 0.1); }
+    .game-btn { padding: 6px 16px; border-radius: 4px; font-family: inherit; font-size: 0.75rem; cursor: pointer; transition: all 0.3s; border: 1px solid; }
+    .game-btn.play { background: rgba(0, 255, 136, 0.2); border-color: var(--success); color: var(--success); }
+    .game-btn.stop { background: rgba(255, 0, 100, 0.2); border-color: #ff6b6b; color: #ff6b6b; }
+    
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(0, 240, 255, 0.1); border-top-color: var(--cyan); border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.3); border-radius: 3px; }
+    
+    @media (max-width: 900px) {
+      .sidebar { position: absolute; height: 100%; transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); box-shadow: 20px 0 40px rgba(0,0,0,0.8); }
+      .studio-grid, .ide-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  
+  <!-- Boot Screen -->
+  <div id="boot-screen" class="boot-screen">
+    <div class="boot-logo">NEXUS</div>
+    <div class="boot-subtitle">OPERATING SYSTEM V16.0</div>
+    <div class="boot-terminal" id="boot-terminal"></div>
+    <div class="boot-progress"><div class="boot-progress-bar" id="boot-progress"></div></div>
+    <div class="boot-percent" id="boot-percent">0% Complete</div>
+    <button class="skip-btn hidden" id="skip-btn" onclick="skipBoot()">[ SKIP INTRO ]</button>
+  </div>
+
+  <div class="content-layer hidden" id="app-root"></div>
+
+  <script>
+    // ================== CONFIG ==================
+    const Store = {
+      get: (k) => JSON.parse(localStorage.getItem(k) || 'null'),
+      set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+      users: () => Store.get('nexus_users') || [{ u: 'admin', p: 'dauptr', r: 'admin', s: 'active' }],
+      saveUsers: (d) => Store.set('nexus_users', d),
+      currUser: () => Store.get('nexus_curr_user')
+    };
+    if(!Store.get('nexus_users')) Store.saveUsers([{ u: 'admin', p: 'dauptr', r: 'admin', s: 'active' }]);
+
+    const State = {
+      user: Store.currUser(),
+      nav: 'dashboard',
+      chat: { msgs: [], input: '' },
+      studio: { prompt: '', history: [], loading: false, style: 'photorealistic' },
+      terminal: { history: ['NEXUS Terminal v16.0', 'Type "help" for commands.'], input: '' },
+      radio: { stations: [], playing: null, search: '' },
+      weather: { data: null, city: 'New York' },
+      ide: { code: '<h1 style="color:#fff;background:#000;padding:20px">Hello Nexus</h1>' },
+      sidebarOpen: false,
+      networkData: Array.from({length:20}, () => Math.random() * 100),
+      stats: [
+        { label: 'Neural Processing', value: 94, icon: '🧠' },
+        { label: 'Quantum Memory', value: 12.4, icon: '⚡' },
+        { label: 'AI Sentience', value: 99.7, icon: '🤖' },
+        { label: 'Network Nodes', value: 2847, icon: '🌐' }
+      ],
+      game: { score: 0, playing: false }
+    };
+
+    // ================== 3D BACKGROUND ==================
+    const initBG = () => {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      const ambient = new THREE.AmbientLight(0x404040, 2); scene.add(ambient);
+      const light = new THREE.PointLight(0xa855f7, 2, 100); light.position.set(10, 10, 10); scene.add(light);
+      const ico = new THREE.Mesh(new THREE.IcosahedronGeometry(2.5, 1), new THREE.MeshPhongMaterial({ color: 0x8a2be2, wireframe: true, transparent: true, opacity: 0.6 }));
+      scene.add(ico);
+      const particles = new THREE.BufferGeometry();
+      const verts = []; for(let i=0; i<1500; i++) verts.push((Math.random()-0.5)*40, (Math.random()-0.5)*40, (Math.random()-0.5)*40);
+      particles.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+      scene.add(new THREE.Points(particles, new THREE.PointsMaterial({ color: 0xffffff, size: 0.04, transparent: true, opacity: 0.5 })));
+      camera.position.z = 6;
+      const animate = () => { requestAnimationFrame(animate); ico.rotation.x+=0.002; ico.rotation.y+=0.004; renderer.render(scene, camera); };
+      animate();
+      window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+    };
+
+    // ================== AI ENGINE ==================
+    const AI = {
+      ask: async (prompt) => {
+        if(!window.puter?.ai) return "AI connecting...";
+        try { const r = await window.puter.ai.chat(prompt, { model: 'gpt-4o-mini' }); return typeof r === 'string' ? r : r.message?.content || "Done."; }
+        catch(e) { return "Error: " + e.message; }
+      },
+      img: async (prompt) => {
+        if(!window.puter?.ai) throw new Error("AI connecting...");
+        const r = await window.puter.ai.txt2img(prompt, { model: 'dall-e-2' });
+        if(r instanceof HTMLImageElement) return r.src;
+        if(r.url) return r.url;
+        throw new Error("Image generation failed");
+      }
+    };
+
+    // ================== CHAT ==================
+    const chatChan = new BroadcastChannel('nexus_os_v16_global');
+    chatChan.onmessage = (ev) => {
+      if(ev.data.type === 'msg' && State.user && ev.data.u !== State.user.u) {
+        State.chat.msgs.push({...ev.data, mine: false}); render();
+      }
+    };
+    const Chat = {
+      send: (text) => {
+        if(!text.trim()) return;
+        if(text.startsWith('/ai ')) {
+           const p = text.substring(4);
+           State.chat.msgs.push({ u: 'NEXUS AI', t: 'Thinking...', mine: false, meta: new Date().toLocaleTimeString(), ai: true });
+           render();
+           AI.ask(p).then(res => { State.chat.msgs[State.chat.msgs.length-1].t = res; render(); });
+           return;
+        }
+        const msg = { u: State.user.u, t: text, meta: new Date().toLocaleTimeString(), mine: true };
+        State.chat.msgs.push(msg);
+        chatChan.postMessage({ type: 'msg', ...msg });
+        render();
+      }
+    };
+
+    // ================== BOOT ==================
+    const BOOT_STAGES = [{id:'bios',label:'BIOS Initialization'},{id:'memory',label:'Neural Memory'},{id:'quantum',label:'Quantum Core'},{id:'ai',label:'AI Bootstrap'},{id:'network',label:'Mesh Network'},{id:'ready',label:'System Ready'}];
+    
+    function runBoot() {
+      let progress = 0, stage = 0;
+      const duration = 4000;
+      const stageTime = duration / BOOT_STAGES.length;
+      let elapsed = 0;
+      document.getElementById('skip-btn').classList.remove('hidden');
+      const interval = setInterval(() => {
+        elapsed += 50;
+        progress = (elapsed/duration)*100;
+        stage = Math.min(Math.floor(elapsed/stageTime), BOOT_STAGES.length-1);
+        
+        document.getElementById('boot-progress').style.width = progress + '%';
+        document.getElementById('boot-percent').textContent = Math.round(progress) + '% Complete';
+        
+        let html = '';
+        for(let i=0; i<=stage; i++) {
+          const active = i === stage;
+          html += `<div class="boot-line ${active?'active':'done'}"><span>${active?'▸':'✓'}</span><span>${BOOT_STAGES[i].label}</span></div>`;
+        }
+        document.getElementById('boot-terminal').innerHTML = html;
+        
+        if(elapsed >= duration) {
+          clearInterval(interval);
+          setTimeout(() => {
+            document.getElementById('boot-screen').classList.add('hidden');
+            document.getElementById('app-root').classList.remove('hidden');
+            initBG();
+            render();
+          }, 400);
+        }
+      }, 50);
+    }
+    
+    function skipBoot() {
+      document.getElementById('boot-screen').classList.add('hidden');
+      document.getElementById('app-root').classList.remove('hidden');
+      initBG();
+      render();
+    }
+
+    // ================== RENDER ==================
+    const render = () => {
+      document.getElementById('app-root').innerHTML = State.user ? renderApp() : renderAuth();
+      bindEvents();
+    };
+
+    const renderAuth = () => `
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-logo">NEXUS</div>
+          <div style="text-align:center; margin-bottom:2rem; color:var(--text-muted);">Ultimate Edition</div>
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" id="auth_u" class="form-input" placeholder="admin">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="auth_p" class="form-input" placeholder="dauptr">
+          </div>
+          <button class="btn btn-primary" onclick="login()">Sign In</button>
+          <button class="btn btn-secondary" style="margin-top:0.5rem" onclick="register()">Create Account</button>
+        </div>
+      </div>
+    `;
+
+    const renderApp = () => `
+      <div class="app-shell">
+        <aside class="sidebar ${State.sidebarOpen ? 'open' : ''}" id="sidebar">
+          <div class="sidebar-header"><div class="brand">NEXUS</div></div>
+          <nav class="nav-menu">
+            <div class="nav-section-title">Main</div>
+            <div class="nav-item ${State.nav === 'dashboard' ? 'active':''}" onclick="nav('dashboard')">🏠 Dashboard</div>
+            <div class="nav-item ${State.nav === 'chat' ? 'active':''}" onclick="nav('chat')">💬 Network</div>
+            <div class="nav-item ${State.nav === 'studio' ? 'active':''}" onclick="nav('studio')">🎨 Art Studio</div>
+            
+            <div class="nav-section-title">Tools</div>
+            <div class="nav-item ${State.nav === 'game' ? 'active':''}" onclick="nav('game')">🎮 Game Studio</div>
+            <div class="nav-item ${State.nav === 'terminal' ? 'active':''}" onclick="nav('terminal')">⌨️ Terminal</div>
+            <div class="nav-item ${State.nav === 'ide' ? 'active':''}" onclick="nav('ide')">💻 IDE</div>
+            <div class="nav-item ${State.nav === 'radio' ? 'active':''}" onclick="nav('radio')">📻 Radio</div>
+            <div class="nav-item ${State.nav === 'weather' ? 'active':''}" onclick="nav('weather')">⛈️ Weather</div>
+            
+            ${State.user.r === 'admin' ? `<div class="nav-section-title">System</div><div class="nav-item ${State.nav === 'admin' ? 'active':''}" onclick="nav('admin')">🛡️ Admin</div>` : ''}
+          </nav>
+          <div class="user-profile">
+            <div class="user-info"><div class="avatar">${State.user.u[0].toUpperCase()}</div><div><div style="font-weight:600">${State.user.u}</div><div style="font-size:0.7rem; color:var(--text-muted)">${State.user.r}</div></div></div>
+            <button class="btn btn-secondary btn-small" style="margin-top:1rem; width:100%" onclick="logout()">Logout</button>
+          </div>
+        </aside>
+        <main class="main-content">
+          <div class="topbar">
+            <div class="topbar-left">
+               <button class="btn btn-secondary btn-small" onclick="toggleSidebar()">☰</button>
+               <div class="page-title">${State.nav.toUpperCase()}</div>
+            </div>
+          </div>
+          <div class="page-container">${renderPage()}</div>
+        </main>
+      </div>
+    `;
+
+    const renderPage = () => {
+      switch(State.nav) {
+        case 'dashboard': return renderDash();
+        case 'chat': return renderChat();
+        case 'studio': return renderStudio();
+        case 'game': return renderGame();
+        case 'terminal': return renderTerm();
+        case 'ide': return renderIDE();
+        case 'radio': return renderRadio();
+        case 'weather': return renderWeather();
+        case 'admin': return renderAdmin();
+        default: return renderDash();
+      }
+    };
+
+    const renderDash = () => `
+      <div style="text-align:center; margin-bottom:2rem">
+        <h1 style="font-size:3rem; font-weight:800; font-family:'Space Grotesk'; margin-bottom:0.5rem" class="text-gradient">Welcome, ${State.user.u}</h1>
+        <p style="color:var(--text-muted)">All systems operational. AI Core active.</p>
+      </div>
+      
+      <div class="glass-card" style="margin-bottom:2rem; padding:1rem">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.8rem; color:var(--text-muted)">
+          <span>Network Activity</span><span>Real-time</span>
+        </div>
+        <div class="network-bars" id="net-bars">
+          ${State.networkData.map(v => `<div class="network-bar" style="height:${v}%"></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        ${State.stats.map(s => `
+          <div class="stat-card">
+            <div class="stat-icon">${s.icon}</div>
+            <div class="stat-value text-gradient">${s.value}${s.label.includes('Nodes')?'':s.label.includes('Memory')?'TB':'%'}</div>
+            <div class="stat-label">${s.label}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <h3 style="margin-bottom:1rem; color:var(--cyan)">Core Capabilities</h3>
+      <div class="features-grid">
+        ${[{i:'🧠',t:'Sentient AI',d:'Neural core'},{i:'⚡',t:'Quantum',d:'10^15 ops'},{i:'🔒',t:'Security',d:'AES-512'},{i:'🌐',t:'Mesh',d:'Global'}].map(f=>`
+          <div class="feature-card">
+            <div style="font-size:2rem; margin-bottom:0.5rem">${f.i}</div>
+            <div class="feature-title">${f.t}</div>
+            <div style="font-size:0.8rem; color:var(--text-muted)">${f.d}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    const renderChat = () => `
+      <div class="chat-layout">
+        <div class="chat-main">
+          <div class="chat-messages" id="chat-box">
+            ${State.chat.msgs.map(m => `
+              <div class="msg ${m.mine ? 'msg-out' : 'msg-in'} ${m.ai ? 'msg-ai' : ''}">
+                ${!m.mine && !m.ai ? `<strong style="color:var(--primary-light);font-size:0.8em">${m.u}</strong><br>` : ''}
+                ${m.t}
+                <span style="font-size:0.65rem; opacity:0.6; display:block; margin-top:0.5rem; text-align:right">${m.meta}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="chat-input-area">
+            <input type="text" id="chat_i" class="chat-input" placeholder="Message... (Type /ai [prompt] for AI)" value="${State.chat.input}">
+            <button class="btn btn-primary btn-small" onclick="Chat.send(document.getElementById('chat_i').value); State.chat.input=''; render();">Send</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const renderStudio = () => `
+      <div class="studio-grid">
+        <div class="glass-card" style="display:flex; flex-direction:column; gap:1rem">
+          <h3>Creation Tools</h3>
+          <textarea class="prompt-box" id="p_box" placeholder="Describe your vision...">${State.studio.prompt}</textarea>
+          <button class="btn btn-primary" onclick="genArt()" id="gen_btn">${State.studio.loading ? 'Generating...' : 'Create'}</button>
+          <p style="font-size:0.7rem; color:var(--text-muted)">Powered by DALL-E-2 (Free)</p>
+        </div>
+        <div class="glass-card" style="overflow-y:auto">
+          <h3 style="margin-bottom:1rem">Gallery</h3>
+          <div class="gallery-grid">
+            ${State.studio.history.map(img => `
+              <div class="gallery-item">
+                <img src="${img}">
+                <div class="gallery-overlay">
+                  <button class="btn btn-secondary btn-small" onclick="dl('${img}')">⬇️</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    const renderGame = () => `
+      <div class="glass-card">
+        <div class="game-toolbar">
+          <div style="display:flex; align-items:center; gap:1rem">
+            <span style="font-weight:600">Quantum Runner</span>
+            <span style="padding:4px 8px; background:rgba(0,255,136,0.2); border-radius:4px; font-size:0.8rem; color:var(--success)">Score: ${State.game.score}</span>
+          </div>
+          <div>
+            ${State.game.playing ? 
+              `<button class="game-btn stop" onclick="stopGame()">⏹ Stop</button>` : 
+              `<button class="game-btn play" onclick="startGame()">▶ Play</button>`
+            }
+          </div>
+        </div>
+        <div style="position:relative">
+          <canvas id="game_canvas" class="game-canvas" width="800" height="400"></canvas>
+          ${!State.game.playing ? `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6)"><div style="text-align:center"><div style="font-size:3rem">🎮</div><p style="color:var(--text-muted)">Click Play to start</p></div></div>` : ''}
+        </div>
+      </div>
+    `;
+
+    const renderTerm = () => `
+      <div class="glass-card">
+        <div class="terminal-body">${State.terminal.history.join('\n')}</div>
+        <div style="margin-top:1rem; display:flex; gap:1rem">
+          <span style="color:var(--success)">$</span>
+          <input type="text" id="term_i" class="terminal-input" placeholder="Command..." value="${State.terminal.input}">
+        </div>
+      </div>
+    `;
+
+    const renderIDE = () => `
+      <div class="glass-card">
+        <div style="display:flex; justify-content:space-between; margin-bottom:1rem">
+          <h3>Code Editor</h3>
+          <button class="btn btn-primary btn-small" onclick="runIDE()">▶ Run</button>
+        </div>
+        <div class="ide-container">
+          <textarea id="ide_code" class="ide-editor" onchange="State.ide.code=this.value">${State.ide.code}</textarea>
+          <iframe id="ide_prev" class="ide-preview"></iframe>
+        </div>
+      </div>
+    `;
+
+    const renderRadio = () => `
+      <div class="glass-card">
+        <h3 style="margin-bottom:1rem">Worldwide Radio</h3>
+        <div style="display:flex; gap:0.5rem; margin-bottom:1rem">
+          <input type="text" id="rad_search" class="form-input" placeholder="Search stations..." style="padding:8px" value="${State.radio.search}">
+          <button class="btn btn-secondary btn-small" onclick="searchRadio()">Search</button>
+        </div>
+        ${State.radio.playing ? `<div style="background:rgba(0,0,0,0.2); padding:1rem; border-radius:8px; margin-bottom:1rem; display:flex; align-items:center; gap:1rem">
+          <button class="btn btn-primary btn-small" onclick="audioToggle()">⏸</button>
+          <div><strong>${State.radio.playing.name}</strong><div style="font-size:0.8rem; color:var(--text-muted)">${State.radio.playing.country}</div></div>
+        </div>` : ''}
+        <div class="station-list">
+          ${State.radio.stations.map((s,i) => `<div class="station-item" onclick="playRadio(${i})"><div style="font-weight:600">${s.name}</div><div style="font-size:0.8rem; color:var(--text-muted)">${s.country}</div></div>`).join('')}
+        </div>
+      </div>
+    `;
+
+    const renderWeather = () => `
+      <div class="glass-card">
+        <h3 style="margin-bottom:1rem">Weather Station</h3>
+        <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem">
+          <input type="text" id="w_city" class="form-input" placeholder="City..." style="padding:8px" value="${State.weather.city}">
+          <button class="btn btn-secondary btn-small" onclick="getWeather()">Check</button>
+        </div>
+        ${State.weather.data ? `
+          <div class="weather-main">
+            <div style="font-size:3rem">${State.weather.data.icon}</div>
+            <div>
+              <div style="font-size:2.5rem; font-weight:700">${State.weather.data.temp}°C</div>
+              <div style="color:var(--text-muted)">${State.weather.data.desc}</div>
+            </div>
+          </div>
+        ` : '<div style="color:var(--text-muted)">Search for a city...</div>'}
+      </div>
+    `;
+
+    const renderAdmin = () => `
+      <div class="glass-card">
+        <h3 style="margin-bottom:1rem">User Management</h3>
+        <table class="admin-table">
+          <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${Store.users().map(u => `
+              <tr>
+                <td>${u.u}</td>
+                <td>${u.r}</td>
+                <td><span class="status-badge ${u.s === 'active' ? 'status-active' : 'status-banned'}">${u.s}</span></td>
+                <td>
+                  ${u.u !== 'admin' ? `
+                    <button class="btn btn-secondary btn-small" onclick="toggleBan('${u.u}')">${u.s === 'active' ? 'Ban' : 'Unban'}</button>
+                    <button class="btn btn-secondary btn-small" style="border-color:var(--danger); color:var(--danger)" onclick="delUser('${u.u}')">Delete</button>
+                  ` : ''}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    // ================== ACTIONS ==================
+    window.nav = (p) => { State.nav = p; State.sidebarOpen = false; render(); };
+    window.toggleSidebar = () => { State.sidebarOpen = !State.sidebarOpen; render(); };
+    
+    window.login = () => {
+      const u = document.getElementById('auth_u').value, p = document.getElementById('auth_p').value;
+      const user = Store.users().find(x => x.u === u && x.p === p);
+      if(user && user.s !== 'banned') { State.user = user; Store.set('nexus_curr_user', user); render(); startStats(); }
+      else alert(user ? 'Account banned.' : 'Invalid credentials');
+    };
+    window.register = () => {
+      const u = document.getElementById('auth_u').value, p = document.getElementById('auth_p').value;
+      if(!u || !p) return alert('Fill fields');
+      let users = Store.users();
+      if(users.find(x => x.u === u)) return alert('User exists');
+      users.push({ u, p, r: 'user', s: 'active' });
+      Store.saveUsers(users);
+      State.user = { u, r: 'user' };
+      Store.set('nexus_curr_user', State.user);
+      render();
+    };
+    window.logout = () => { State.user = null; Store.set('nexus_curr_user', null); render(); };
+    
+    window.toggleBan = (u) => { let d = Store.users(); const i = d.findIndex(x=>x.u===u); if(i>=0) d[i].s = d[i].s === 'active' ? 'banned' : 'active'; Store.saveUsers(d); render(); };
+    window.delUser = (u) => { if(confirm("Delete?")) { Store.saveUsers(Store.users().filter(x=>x.u!==u)); render(); } };
+    
+    window.genArt = async () => {
+      const p = document.getElementById('p_box').value; if(!p) return;
+      State.studio.loading = true; render();
+      try {
+        const url = await AI.img(p);
+        State.studio.history.unshift(url);
+      } catch(e) { alert("Error: " + e.message); }
+      State.studio.loading = false; render();
+    };
+    window.dl = (url) => { const a = document.createElement('a'); a.href=url; a.download='art.png'; a.click(); };
+
+    window.runIDE = () => { const c = document.getElementById('ide_code').value; document.getElementById('ide_prev').srcdoc = c; };
+    
+    window.searchRadio = async () => {
+      const q = document.getElementById('rad_search').value;
+      const res = await fetch(`https://de1.api.radio-browser.info/json/stations/search?name=${q}&limit=20`);
+      const d = await res.json();
+      State.radio.stations = d.map(s => ({ name: s.name, url: s.url_resolved, country: s.country }));
+      render();
+    };
+    window.playRadio = (i) => {
+      const s = State.radio.stations[i];
+      if(!window.audio) window.audio = new Audio();
+      window.audio.src = s.url;
+      window.audio.play();
+      State.radio.playing = s;
+      render();
+    };
+    window.audioToggle = () => { if(!window.audio) return; if(State.radio.playing) { window.audio.pause(); State.radio.playing = false; } else { window.audio.play(); State.radio.playing = true; } render(); };
+
+    window.getWeather = async () => {
+      const c = document.getElementById('w_city').value;
+      State.weather.city = c;
+      const res = await fetch(`https://wttr.in/${c}?format=j1`);
+      const d = await res.json();
+      const cc = d.current_condition[0];
+      const icons = {'113':'☀️','116':'⛅','119':'☁️','263':'🌧️','200':'⛈️','227':'❄️','143':'🌫️'};
+      State.weather.data = { temp: cc.temp_C, desc: cc.weatherDesc[0].value, icon: icons[cc.weatherCode] || '🌡️' };
+      render();
+    };
+    
+    // Game Logic (Ported from V9)
+    window.startGame = () => { State.game.playing = true; State.game.score = 0; render(); runGame(); };
+    window.stopGame = () => { State.game.playing = false; render(); };
+    
+    function runGame() {
+      const c = document.getElementById('game_canvas');
+      if(!c) return;
+      const ctx = c.getContext('2d');
+      let px=200, py=150, pvy=0, ex=400, ed=1;
+      const coins = [{x:300,y:200,c:false},{x:450,y:180,c:false}];
+      const keys = {};
+      const kd = e => keys[e.code] = true;
+      const ku = e => keys[e.code] = false;
+      window.addEventListener('keydown', kd); window.addEventListener('keyup', ku);
+      
+      function loop() {
+        if(!State.game.playing) { window.removeEventListener('keydown', kd); window.removeEventListener('keyup', ku); return; }
+        
+        // Draw Background
+        ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0,0,800,400);
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+        for(let x=0; x<800; x+=40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,400); ctx.stroke(); }
+        for(let y=0; y<400; y+=40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(800,y); ctx.stroke(); }
+        
+        // Physics
+        if(keys['ArrowLeft']||keys['KeyA']) px-=4;
+        if(keys['ArrowRight']||keys['KeyD']) px+=4;
+        if((keys['Space']||keys['ArrowUp']||keys['KeyW'])&&py>=150) pvy=-8;
+        pvy+=0.4; py+=pvy;
+        if(py>200){ py=200; pvy=0; }
+        px=Math.max(20, Math.min(780, px));
+        
+        // Draw Ground
+        ctx.fillStyle = '#00ff88'; ctx.fillRect(0, 340, 800, 60);
+        
+        // Draw Player
+        ctx.fillStyle = '#00f0ff'; ctx.shadowColor='#00f0ff'; ctx.shadowBlur=10;
+        ctx.fillRect(px-15,py-30,30,50);
+        ctx.shadowBlur=0;
+        
+        // Enemy
+        ex+=ed*2; if(ex>700||ex<100) ed*=-1;
+        ctx.fillStyle = '#ff00aa'; ctx.shadowColor='#ff00aa'; ctx.shadowBlur=10;
+        ctx.beginPath(); ctx.arc(ex,340,20,0,Math.PI*2); ctx.fill();
+        ctx.shadowBlur=0;
+        
+        // Coins
+        coins.forEach(co => {
+          if(!co.c){
+            const dx = px-co.x, dy=py-50-co.y;
+            if(Math.sqrt(dx*dx+dy*dy)<30){ co.c=true; State.game.score+=10; render(); }
+            ctx.fillStyle='#fbbf24'; ctx.beginPath(); ctx.arc(co.x,co.y+50,12,0,Math.PI*2); ctx.fill();
+          }
+        });
+        
+        ctx.fillStyle='#00f0ff'; ctx.font='20px monospace'; ctx.fillText('Score: '+State.game.score, 20, 30);
+        
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    function startStats() {
+      setInterval(() => {
+        State.networkData = Array.from({length:20}, () => Math.random() * 100);
+        State.stats = State.stats.map(s => ({...s, value: s.value + (Math.random()-0.5)*2}));
+        renderDashStats();
+      }, 800);
+    }
+    
+    function renderDashStats() {
+      const bars = document.getElementById('net-bars');
+      if(bars) bars.innerHTML = State.networkData.map(v => `<div class="network-bar" style="height:${v}%"></div>`).join('');
+    }
+
+    const bindEvents = () => {
+      const chatBox = document.getElementById('chat-box'); if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+      const termIn = document.getElementById('term_i');
+      if(termIn) termIn.onkeydown = (e) => {
+        if(e.key === 'Enter') {
+          const cmd = termIn.value.trim().toLowerCase();
+          State.terminal.history.push(`$ ${cmd}`);
+          if(cmd === 'clear') State.terminal.history = [];
+          else if(cmd === 'help') State.terminal.history.push('Commands: help, status, clear');
+          else if(cmd === 'status') State.terminal.history.push('System: ONLINE');
+          else State.terminal.history.push(`Unknown: ${cmd}`);
+          State.terminal.input = ''; render();
+        }
+      };
+    };
+
+    // ================== INIT ==================
+    runBoot();
+
+  </script>
+</body>
+</html>
